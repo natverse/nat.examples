@@ -13,11 +13,18 @@ for each cell is included in the packaged dataset – although 4-6 were typicall
 traced (each one by a different student).
 
 ## Running the code
+In the R for Mac GUI (and perhaps others) you can drag and drop source code files
+into the console.
 
 ```
 source("00-setup.R", chdir=TRUE)
+source("01-download.R", chdir=TRUE)
 ```
-etc.
+Then go over `02-sample-plots.R` step by step. You may need to do
+
+```
+setwd("/path/to/nat.examples/03-helmstaedter2013")
+```
 
 ## TODO
 * Convert to regular neuron rather than special skel datatype
