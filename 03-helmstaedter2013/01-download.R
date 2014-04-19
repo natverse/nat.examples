@@ -6,6 +6,7 @@
 urls=file.path("http://flybrain.mrc-lmb.cam.ac.uk/si/nat/helmstaedter/",
   c('sk.uniq.rda','skeleton_metadata.rda'))
 
+message("Downloading data (30Mb) if necessary ...")
 for (url in urls){
   localfile=basename(url)
   if(file.exists(localfile)) next
