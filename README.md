@@ -12,7 +12,7 @@ Example code for the NeuroAnatomy Toolbox ([nat](https://github.com/jefferis/nat
 
 ```
 install.packages(nat)
-library(nat)
+library("nat")
 ```
 
 ## Contents
