@@ -2,6 +2,9 @@ if(!require('nat')) install.packages("nat")
 
 library(nat)
 
+# set working directory to location of this file
+setwd(dirname(attr(body(function() {}),'srcfile')$filename))
+
 #' plot3d method for Moritz's neurons
 #'
 #' @param sk A neuron in Moritz's format (defined by matlab data)
