@@ -10,4 +10,4 @@ colouring neurons using different metadata criteria.
 
 ## Running the code
 
-See `Using these examples` in the main README.md file
+See `Using these examples` in the main `README.md` file
