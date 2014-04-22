@@ -7,3 +7,7 @@ Nature 478 p236-40 (2011 Sep 28)
 
 This example includes some slightly more sophisticated 3d plots, selecting and
 colouring neurons using different metadata criteria.
+
+## Running the code
+
+See `Using these examples` in the main README.md file

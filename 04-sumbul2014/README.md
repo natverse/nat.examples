@@ -14,7 +14,4 @@ http://www.nature.com/ncomms/2014/140324/ncomms4512/extref/ncomms4512-s14.zip
 
 ## Running the code
 
-```
-source("00-setup.R")
-```
-etc.
+See `Using these examples` in the main README.md file

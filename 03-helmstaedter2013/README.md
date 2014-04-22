@@ -17,7 +17,7 @@ In the R for Mac GUI (and perhaps others) you can drag and drop source code file
 into the console.
 
 ```
-source("00-setup.R", chdir=TRUE)
+source("00-setup.R")
 source("01-download.R", chdir=TRUE)
 ```
 Then go over `02-sample-plots.R` step by step. You may need to do
