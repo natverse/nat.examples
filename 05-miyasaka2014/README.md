@@ -1,4 +1,4 @@
-# Processing retinal ganglion cells from Sumbul et al
+# Processing mitral cells from Miyasaka et al.
 ## Article
 Olfactory projectome in the zebrafish forebrain revealed by genetic single-neuron labelling
 
