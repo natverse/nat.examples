@@ -38,7 +38,8 @@ code interactively (e.g. with copy paste or R studios run selection options).
 02. Grosjean et al 2011 Drosophila Projection Neuron Data
 03. Helmstaedter et al 2013 Mouse Retinal Connectome (still in progress)
 04. Sumbul et al 2014 Mouse Retinal Ganglion Cells
-05. Miyasaka et al 2014 Zebrafish Mitral Cell Projectome 
+05. Miyasaka et al 2014 Zebrafish Mitral Cell Projectome
+06. Lee et al 2012 Traced Drosophila neurons
 
 ## Acknowledgements
 We insist that you cite the original authors of each study if you make use of
