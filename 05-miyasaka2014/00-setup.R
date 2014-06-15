@@ -1,4 +1,6 @@
 if(!require('nat')) install.packages("nat")
+if(!require('devtools')) install.packages("devtools")
+if(!require('nat.nblast')) devtools::install_github('jefferislab/nat.nblast')
 
 library(nat)
 
