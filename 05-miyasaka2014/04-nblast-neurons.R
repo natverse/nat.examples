@@ -1,10 +1,13 @@
 # Setup
 zm <- readRDS('neurons_canonical.rds')
 library(nat.nblast)
+if(!require('stringr')) install.packages("stringr")
+if(!require('dendroextras')) install.packages("dendroextras")
 
 
 # Convert neurons to dotprops objects
 zmdps <- dotprops(zm, k=5, resample=1)
+zm_class <- sub("-", "", str_match(names(zm), "[A-z]*-T?L?"))
 
 
 # NBLAST neurons
@@ -33,6 +36,13 @@ zm_res_mean_dist <- 1 - zm_res_mean
 diag(zm_res_mean_dist) <- 0
 zm_res_mean_dist <- as.dist(zm_res_mean_dist)
 zm_clust <- hclust(zm_res_mean_dist)
+zm_dend <- as.dendrogram(zm_clust)
+
+zm_cols <- c(maG="#3635fd", dG="#f08380", vaG="#df20be", lG="#6e9d3f", vpG="#6a6d26", mdGT="#87b3d8", mdGL="#dea76f", vmG="#454545")
+par(mar=c(3,1,1,5))
+zm_dend_col=set_leaf_colors(zm_dend, structure(zm_cols[zm_class],.Names=names(zm)), col_to_set='label')
+zm_dend_col=color_clusters(zm_dend_col,k=4,col=rep('black',4),groupLabels=as.roman)
+plot(zm_dend_col, horiz=TRUE)
 
 
 # Helper display functions
