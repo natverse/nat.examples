@@ -2,7 +2,6 @@
 # vTel and dTel
 
 # find bounding boxes
-
 mask.box=read.im3d("mask-box.nrrd",ReadByteAsRaw=TRUE)
 mask.box.coords=imexpand.grid(mask.box)[mask.box>0,]
 mask.box.bbox=apply(mask.box.coords,2,range)
@@ -12,13 +11,12 @@ mask.box.vTel.coords=imexpand.grid(mask.box.vTel)[mask.box.vTel>0,]
 mask.box.vTel.bbox=apply(mask.box.vTel.coords,2,range)
 
 
-
 # convert bounding box to a selection function
 bbox2sel3d<-function(b) {
-    rfun<-function(x, y=NULL, z=NULL) with(xyz.coords(x,y,z), b[1,1]<=x & x<=b[2,1] & b[1,2]<=y & y<=b[2,1] & b[1,3]<=z & z<=b[2,3])
+    rfun<-function(x, y=NULL, z=NULL) with(xyz.coords(x,y,z), b[1,1]<=x & x<=b[2,1] & b[1,2]<=y & y<=b[2,2] & b[1,3]<=z & z<=b[2,3])
 }
 
-
+# read in dotprops version of neurons
 zmdps=readRDS('zmdps.rds')
 zm.mask=nlapply(zmdps, function(x) subset(x, bbox2sel3d(mask.box.bbox)))
 zm.mask.vTel=nlapply(zmdps, function(x) subset(x, bbox2sel3d(mask.box.vTel.bbox)))
