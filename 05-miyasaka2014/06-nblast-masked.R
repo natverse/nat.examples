@@ -4,15 +4,10 @@ zm.mask.vTel=readRDS('zm.mask.vTel.rds')
 
 library(nat.nblast)
 
-# Convert neurons to dotprops objects
-zmdps <- dotprops(zm, k=5, resample=1)
-saveRDS(zmdps,file='zmdps.rds')
-
 zm_class <- sub("-", "", str_match(names(zm), "[A-z]*-T?L?"))
 
-
 # NBLAST neurons
-zm_res <- nblast(zmdps, zmdps)
+zm_res <- nblast(zm.mask, zm.mask)
 zm_res_norm <- scale(zm_res, center=FALSE, scale=diag(zm_res))
 zm_res_mean <- (zm_res_norm + t(zm_res_norm)) / 2
 
