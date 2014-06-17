@@ -7,6 +7,8 @@ if(!require('dendroextras')) install.packages("dendroextras")
 
 # Convert neurons to dotprops objects
 zmdps <- dotprops(zm, k=5, resample=1)
+saveRDS(zmdps,file='zmdps.rds')
+
 zm_class <- sub("-", "", str_match(names(zm), "[A-z]*-T?L?"))
 
 
