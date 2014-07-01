@@ -32,7 +32,7 @@ clear3d()
 plot3d(kcs20, subset=type=='gamma', col='red')
 plot3d(kcs20, type=='apbp', col='blue')
 
-# Plot all 20 neurons coloured by whether their Kenyon cell type
+# Plot all 20 neurons coloured by their Kenyon cell type
 clear3d()
 with(kcs20, table(type))
 plot3d(kcs20, col=type)
