@@ -8,7 +8,7 @@ Published: September 13, 2012DOI: 10.1371/journal.pcbi.1002658
 
 ## Running the code
 
-See `Using these examples` in the main `README.md` file
+See `Using these examples` in the main [`README.md`](../README.md) file
 
 ## Acknowledgements
 Please cite the *Lee et al.* article if you use these data/code.
