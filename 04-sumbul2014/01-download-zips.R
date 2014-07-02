@@ -9,6 +9,11 @@ for (url in urls){
 	t=try(download.file(url,localfile))
 	if(inherits(t,'try-error')) {
 		message("unable to download ", url)
+		if(grepl("14\\.zip",url)){
+			# fetch from alternative location
+			url='http://zenodo.org/record/10737/files/ncomms4512-s14.zip'
+			download.file(url,localfile)
+		}
 		next
 	}
 	unzip(localfile)
