@@ -10,6 +10,8 @@ for (url in urls){
 	if(file.exists(localfile)) next
 	t=try(download.file(url,localfile))
 	if(inherits(t,'try-error')) {
+		# remove any bad download
+		unlink(localfile)
 		message("unable to download ", url)
 		next
 	}
