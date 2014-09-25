@@ -11,8 +11,8 @@ Example code for the NeuroAnatomy Toolbox ([nat](https://github.com/jefferis/nat
 4. Now install (once only) and load nat package from within R
 
 ```
-install.packages(nat)
-library("nat")
+install.packages("nat")
+library(nat)
 ```
 
 Each example (except the very basic `01-setup`) assumes that R's current working directory has been set to the
