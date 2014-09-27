@@ -44,7 +44,7 @@ df=data.frame(id=sapply(sumbuln,'[[','NeuronName'),
 
 df$id=as.character(df$id)
 df$tracer=factor(sub(".*_([^_]+)","\\1",df$id))
-df$cell=sub("^([^_]+_[^_]+).*","\\1",df$id)
+df$cell=sub("^([^_]+)_.*","\\1",df$id)
 
 soma<-function(x) data.matrix(x$d[x$StartPoint,c("X",'Y','Z')])
 somapos=t(sapply(sumbuln,soma))
