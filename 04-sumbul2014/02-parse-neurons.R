@@ -50,8 +50,12 @@ soma<-function(x) data.matrix(x$d[x$StartPoint,c("X",'Y','Z')])
 somapos=t(sapply(sumbuln,soma))
 colnames(somapos)=c("X",'Y','Z')
 df=cbind(df,somapos)
+rownames(df)=df$cell
 
-attr(sumbuln,'df')=df
+# call the neurons by their cell name
+names(sumbuln)=df$cell
+# and add the metadata data.frame
+sumbuln=as.neuronlist(sumbuln, df)
 
 save(sumbuln,file='sumbuln.rda')
 
