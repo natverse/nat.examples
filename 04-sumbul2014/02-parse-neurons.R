@@ -20,7 +20,9 @@ sumbul2neuron<-function(x){
 	# nat uses the convention root->child for edge directionality whereas they
 	# seem to have used the reverse
 	edges=x[[2]][,2:1]
-	ng=nat:::ngraph(edges,vertexlabels=seq(nrow(points)),xyz=points)
+  # construct a graph object from the information 
+  # ngraph is a slightly customised version of an igraph object
+	ng=nat::ngraph(edges,vertexlabels=seq(nrow(points)),xyz=points)
 	
 	as.neuron(ng,NeuronName=unlist(x['id',,]), cluster=unlist(x['cluster',,]),
 	geneticLine=unlist(x['geneticLine',,]))
