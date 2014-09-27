@@ -29,7 +29,7 @@ sumbul2neuron<-function(x){
 }
 
 message("Converting matlab data to nat's neuron format. This could take a couple of mins")
-sumbuln=nlapply(matlab_data, sumbul2neuron)
+sumbuln=nlapply(matlab_data, sumbul2neuron, .progress='text')
 
 # Now make a dataframe with useful information
 
@@ -57,6 +57,7 @@ names(sumbuln)=df$cell
 # and add the metadata data.frame
 sumbuln=as.neuronlist(sumbuln, df)
 
+message("Saving processed data")
 save(sumbuln,file='sumbuln.rda')
 
 plot3d(sumbuln[1:10],soma=4,WithNodes=F)
