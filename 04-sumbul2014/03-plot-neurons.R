@@ -2,6 +2,14 @@ library(nat)
 # load in cached version of processed neurons from disk
 load("sumbuln.rda")
 
+# plot neurons from specific structural cluster
+plot3d(subset(sumbuln, cluster=="Z"))
+# two clusters
+plot3d(subset(sumbuln, cluster%in%c("A","Z")), col=cluster)
+# add decorations
+axes3d()
+title3d(xlab='X', ylab='Y', zlab='IPL depth')
+
 # plot everybody except GFP neurons
 # start to see some clear stratification
 plot3d(subset(sumbuln, geneticLine!="GFP-YFP"), col=rainbow(nlevels(geneticLine))[geneticLine])
