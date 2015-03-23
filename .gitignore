@@ -3,3 +3,5 @@
 0*/*.rda
 .Rapp.history
 *~
+*.zip
+*.mat
