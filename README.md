@@ -31,7 +31,7 @@ setwd('/path/to/nat.examples/02-grosjean20011/')
 ```
 
 Once you have run the `00-setup.R` script you can start start running bits of
-code interactively (e.g. with copy paste or R studios run selection options).
+code interactively (e.g. with copy paste or RStudio's "Run selection* menu option).
 
 ## Contents
 01. Library installation and basic example

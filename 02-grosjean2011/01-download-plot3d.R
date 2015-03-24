@@ -34,7 +34,11 @@ rval=plot3d(MyNeurons, subset=grepl("^DM",Glomerulus), col=factor(Glomerulus),
 # make a legend so that you know which colours match which glomerulus
 with(attr(rval,'df'), legend('center', legend = unique(Glomerulus), fill=unique(col)))
 
-# more help
+# more help for commands we have used
 ?plot3d.neuron
 ?plot3d.neuronlist
 ?with.neuronlist
+
+# some other interesting commands
+?find.neuron
+?write.neurons
