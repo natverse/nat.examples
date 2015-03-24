@@ -1,5 +1,6 @@
 if(!require('nat')) install.packages("nat")
 if(!require('rvest')) install.packages("rvest")
+if(!require('nat.nblast')) install.packages("nat.nblast")
 
 library(nat)
 library(rvest)
