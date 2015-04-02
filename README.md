@@ -40,6 +40,7 @@ code interactively (e.g. with copy paste or RStudio's "Run selection* menu optio
 04. Sumbul et al 2014 Mouse Retinal Ganglion Cells
 05. Miyasaka et al 2014 Zebrafish Mitral Cell Projectome
 06. Lee et al 2012 Traced Drosophila neurons
+07. Heinze et al 2013 Traced Monarch butterfly neurons
 
 ## Acknowledgements
 We insist that you cite the original authors of each study if you make use of
