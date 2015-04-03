@@ -9,8 +9,13 @@
 #' nn=read.neurons()
 read.tedore.neuron<-function(x, baseurl="http://www.tedore.net/", ...) {
 	# complete url for input spec if required
-	if(is.numeric(x))
-		x=file.path(file.path(baseurl,"neurons"),x,"")
+	if(is.numeric(x)){
+	  nid=x
+	  x=file.path(file.path(baseurl,"neurons"),x,"")
+	} else {
+	  # the numeric id for the neuron should be the last part of url
+	  nid=basename(x)
+	}
 
 	# get all possible html nodes
 	h=rvest::html(x)
