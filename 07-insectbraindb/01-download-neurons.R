@@ -30,8 +30,15 @@ read.tedore.neuron<-function(x, baseurl="http://www.tedore.net/", ...) {
 	n=nn[[which(n3d)]]
 	url=html_attr(html_nodes(n,'a'),'href')
 	url=file.path(baseurl, url)
+	if(!length(url)) {
+	  # hmm that didn't work, let's look at all the nodes
+	  nt=html_text(html_nodes(n, "dd, dt"))
+	  model_node=grep("3-D model", nt)
+	  filename=nt[model_node+1]
+	  if(length(filename)) url=file.path(baseurl,"media/neurons",nid,"reconstruction", filename)
+	}
 	if(!length(url))
-		stop("Unable to find unique url for 3d neuron model")
+	  stop("Unable to find unique url for 3d neuron model")
 	
 	read.neuron(url, ...)
 }
@@ -52,6 +59,7 @@ names(tedoren)=neurons_table$Identification.Number
 attr(tedoren, 'df')=neurons_table
 actual_neurons=sapply(tedoren, is.neuron)
 message("Keeping ", length(actual_neurons)," valid neurons!")
+tedoren.all=tedoren
 tedoren=tedoren[actual_neurons]
 
 # make species a factor (since there are only a few distinct values)
