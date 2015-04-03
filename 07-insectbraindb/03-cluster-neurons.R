@@ -20,7 +20,9 @@ aba=nblast_allbyall(dpn2)
 # note use of the Neuron name as a label 
 # (fetched from the data.frame attached to dpn neuronlist)
 # Looks like sensible relationships between neurons with similar names
-plot(nhclust(scoremat=aba), labels=with(dpn, Neuron ))
+hcdn=nhclust(scoremat=aba)
+plot(hcdn, labels=with(dpn, Neuron ))
+plot(hcdn, labels=with(dpn, Detail.Page ))
 
 # TODO
 # Delevop a mapping of left to right for this brain region
