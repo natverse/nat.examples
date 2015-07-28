@@ -17,11 +17,11 @@ plot3d.skel<-function(sk,col,WithNodes=FALSE,col.node='black',...){
   interleaved=matrix(t(cbind(starts,stops)),ncol=3,byrow=T)
   if(missing(col)) col=rainbow
   if(is.function(col)){
-    g=as.igraph(sk,prune=TRUE)
-    nc=no.clusters(g)
+    g=as.ngraph(sk)
+    nc=igraph::no.clusters(g)
     col=col(nc)
-    cg=clusters(g)
-    origvids=get.vertex.attribute(g,'label')
+    cg=igraph::clusters(g)
+    origvids=igraph::get.vertex.attribute(g,'label')
     startcols=col[cg$membership[match(sk$edges[,1],origvids)]]
     endcols=col[cg$membership[match(sk$edges[,2],origvids)]]
     col=as.vector(rbind(startcols,endcols))
