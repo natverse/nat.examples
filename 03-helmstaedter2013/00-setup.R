@@ -91,11 +91,22 @@ xyzmatrix.skel<-function(x,ConnectedOnly=FALSE,Transpose=FALSE,...) {
 
 #' Convert Helmstaedter's matlab skel format into nat::neuron objects
 #' 
-#' @description skel objects are my direct R translation of the matlab data provided by 
-#' Briggman, Helmstaedter and Denk.
+#' @description skel objects are my direct R translation of the matlab data
+#'   provided by Briggman, Helmstaedter and Denk.
 #' @param x A skel format neuron to convert
+#' @param ... arguments passed to as.neuron
 #' @return An object of class \code{neuron}
-as.neuron.skel<-function(x) {
-  g=ngraph(x$edges, vertexlabels = seq_len(nrow(x$nodes)), xyz=x$nodes)
-  as.neuron(g)
+#' @seealso \code{\link{as.neuron}}
+as.neuron.skel<-function(x, ...) {
+  as.neuron(as.ngraph(x), ...)
+}
+
+#' Convert Helmstaedter's matlab skel format into nat::ngraph objects
+#' 
+#' @details \code{ngraph} objects are thin wrappers for \code{igraph::graph} 
+#'   objects
+#' @inheritParams as.neuron.skel
+#' @seealso \code{\link[nat]{ngraph}}, \code{\link{as.neuron.skel}}
+as.ngraph.skel<-function(x, ...) {
+  ngraph(x$edges, vertexlabels = seq_len(nrow(x$nodes)), xyz=x$nodes, ...)
 }
