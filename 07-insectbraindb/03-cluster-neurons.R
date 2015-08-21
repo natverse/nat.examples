@@ -34,6 +34,9 @@ labels(hcdn2)=with(dpn, paste(Neuron, side))
 par(mar=c(5,8,5,2))
 plot(hcdn2)
 
+clear3d()
+plot3d(hcdn, db=dpn, k=5, soma=5)
+
 # TODO
 # Delevop a mapping of left to right for this brain region
 # likely based on this
