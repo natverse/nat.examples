@@ -16,7 +16,7 @@ dpn2=dotprops(dpn, resample=5, .progress='text')
 dpn2=dpn2/5
 
 message("calculating all by all nblast scores for these neurons")
-aba=nblast_allbyall(dpn2)
+aba=nblast_allbyall(dpn2, .progress='text')
 
 # plot our clustering
 # note use of the Neuron name as a label 
@@ -24,7 +24,15 @@ aba=nblast_allbyall(dpn2)
 # Looks like sensible relationships between neurons with similar names
 hcdn=nhclust(scoremat=aba)
 plot(hcdn, labels=with(dpn, Neuron ))
+plot(hcdn, labels=with(dpn, paste(Neuron, side)))
 plot(hcdn, labels=with(dpn, Detail.Page ))
+
+# plot colouring each cluster
+library(dendroextras)
+hcdn2=color_clusters(hcdn, k=5)
+labels(hcdn2)=with(dpn, paste(Neuron, side))
+par(mar=c(5,8,5,2))
+plot(hcdn2)
 
 # TODO
 # Delevop a mapping of left to right for this brain region
