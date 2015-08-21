@@ -2,7 +2,7 @@
 
 library(nat.nblast)
 
-load("tedoren.rda")
+load("tedore_neurons.rda")
 
 # subset neuronlist down to the Monarch neurons
 dpn=subset(tedoren, Species=="Danaus plexippus")
