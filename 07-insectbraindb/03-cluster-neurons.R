@@ -13,6 +13,7 @@ dpn[,'side']=ifelse(grepl("(right|R[0-9]+)", dpn[,'Detail.Page']),"R","L")
 # note use of progress bar since this is a bit slow!
 message("converting neurons to dotprops for nblast")
 dpn2=dotprops(dpn, resample=5, .progress='text')
+dpn2=dpn2/5
 
 message("calculating all by all nblast scores for these neurons")
 aba=nblast_allbyall(dpn2)
