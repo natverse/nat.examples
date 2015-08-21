@@ -6,6 +6,7 @@ load("tedore_neurons.rda")
 
 # subset neuronlist down to the Monarch neurons
 dpn=subset(tedoren, Species=="Danaus plexippus")
+dpn[,'side']=ifelse(grepl("(right|R[0-9]+)", dpn[,'Detail.Page']),"R","L")
 
 # convert to dotprops representation for nblast
 # resample every 5µm since these neurons are big
