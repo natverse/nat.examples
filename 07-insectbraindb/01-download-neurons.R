@@ -9,6 +9,9 @@
 #' nn=read.neurons()
 read.tedore.neuron<-function(x, baseurl="http://www.tedore.net/", ...) {
 	# complete url for input spec if required
+  if(is.character(x) && substr(x,1,4)=="NIN-") {
+   x=as.numeric(substr(x, 5, nchar(x)))
+  }
 	if(is.numeric(x)){
 	  nid=x
 	  x=file.path(file.path(baseurl,"neurons"),x,"")
