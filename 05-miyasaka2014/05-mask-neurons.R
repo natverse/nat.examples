@@ -18,7 +18,9 @@ bbox2sel3d<-function(b) {
 
 # read in dotprops version of neurons
 zmdps=readRDS('zmdps.rds')
+# subset every neuron in zmdps neuronlist down to respective bounding box
 zm.mask=nlapply(zmdps, function(x) subset(x, bbox2sel3d(mask.box.bbox)))
 zm.mask.vTel=nlapply(zmdps, function(x) subset(x, bbox2sel3d(mask.box.vTel.bbox)))
+
 saveRDS(zm.mask,file='zmdps.mask.rds')
 saveRDS(zm.mask.vTel,file='zm.mask.vTel.rds')
