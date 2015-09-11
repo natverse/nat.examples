@@ -21,4 +21,11 @@ plot3d(sk.uniq,class=='bipolar',col=factor(stypeid))
 # Glial and starburst amacrines - potential coordinate systems
 # TODO Check "glial" identity
 clear3d();plot3d(sk.uniq,class=='glial',col='grey')
+
+
+clear3d()
+plot3d(sk.uniq,class=='bipolar',col='grey')
 plot3d(sk.uniq,ntype=='starburst amacrine',col=stypeid)
+plot3d(sk.uniq,class=='ganglion',col='green')
+bb=boundingbox(sk.uniq)
+plot3d(bb)
