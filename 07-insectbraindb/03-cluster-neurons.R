@@ -29,10 +29,11 @@ plot(hcdn, labels=with(dpn, Detail.Page ))
 
 # plot colouring each cluster
 library(dendroextras)
-hcdn2=color_clusters(hcdn, k=5)
-labels(hcdn2)=with(dpn, paste(Neuron, side))
+hcdn2=hcdn
+hcdn2$labels=with(dpn, paste(Neuron, side))
+hcdn.dend=color_clusters(hcdn2, k=5)
 par(mar=c(5,8,5,2))
-plot(hcdn2)
+plot(hcdn.dend)
 
 clear3d()
 plot3d(hcdn, db=dpn, k=5, soma=5)
@@ -65,12 +66,13 @@ hcdnm=nhclust(scoremat=abam)
 
 plot(hcdnm, labels=with(dpn, paste(Neuron, side)))
 
-# now, when we look at this
-
-hcdnm2=color_clusters(hcdnm, k=5)
-labels(hcdnm2)=with(dpn, paste(Neuron, side))
+# now, let's colour the clusters
+hcdnm2=hcdnm
+hcdnm2$labels=with(dpn, paste(Neuron, side))
+hcdnm.dend=color_clusters(hcdnm2, k=5)
 par(mar=c(5,8,5,2))
-plot(hcdnm2)
+plot(hcdnm.dend)
 clear3d()
 plot3d(hcdnm, db=dpn, k=5, soma=8, lwd=2)
 wire3d(monarch_cc.surf, col='grey', lwd=0.3)
+
