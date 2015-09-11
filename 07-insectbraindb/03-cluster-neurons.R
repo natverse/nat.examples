@@ -30,7 +30,7 @@ plot(hcdn, labels=with(dpn, Detail.Page ))
 # plot colouring each cluster
 library(dendroextras)
 hcdn2=hcdn
-hcdn2$labels=with(dpn, paste(Neuron, side))
+hcdn2$labels=dpn[,'Detail.Page']
 hcdn.dend=color_clusters(hcdn2, k=5)
 par(mar=c(5,8,5,2))
 plot(hcdn.dend)
@@ -68,7 +68,7 @@ plot(hcdnm, labels=with(dpn, paste(Neuron, side)))
 
 # now, let's colour the clusters
 hcdnm2=hcdnm
-hcdnm2$labels=with(dpn, paste(Neuron, side))
+hcdnm2$labels=dpn[,'Detail.Page']
 hcdnm.dend=color_clusters(hcdnm2, k=5)
 par(mar=c(5,8,5,2))
 plot(hcdnm.dend)
