@@ -11,7 +11,7 @@ with(tedoren, summary(Species))
 
 # plot neurons from specific structural cluster
 nopen3d()
-plot3d(subset(tedoren, Species=="Danaus plexippus"), lwd=2)
+plot3d(subset(tedoren, Species=="Danaus plexippus"), lwd=2, soma=5)
 
 ## add surface object for monarch central complex
 
