@@ -9,10 +9,11 @@ dpn=subset(tedoren, Species=="Danaus plexippus")
 dpn[,'side']=ifelse(grepl("(right|R[0-9]+)", dpn[,'Detail.Page']),"R","L")
 
 # convert to dotprops representation for nblast
-# resample every 5µm since these neurons are big
+# resample every 5µm since these neurons are big, also use 5 nearest neighbours
+# to compute tangent vectors
 # note use of progress bar since this is a bit slow!
 message("converting neurons to dotprops for nblast")
-dpn2=dotprops(dpn, resample=5, .progress='text')
+dpn2=dotprops(dpn, resample=5, .progress='text', k=5)
 dpn2=dpn2/5
 
 message("calculating all by all nblast scores for these neurons")
