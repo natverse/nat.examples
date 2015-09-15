@@ -29,11 +29,13 @@ plot(hcdn, labels=with(dpn, paste(Neuron, side)))
 plot(hcdn, labels=with(dpn, Detail.Page ))
 
 # plot colouring each cluster
-library(dendroextras)
-hcdn2=hcdn
-hcdn2$labels=dpn[,'Detail.Page']
-hcdn.dend=color_clusters(hcdn2, k=5)
-par(mar=c(5,8,5,2))
+library(dendextend)
+hcdn.dend=color_branches(hcdn, k=5, col=rainbow)
+# nb it is necessary to permute the labels used for assignment so that they are
+# in dendrogram order 
+dendextend::labels(hcdn.dend)=dpn[labels(hcdn.dend),'Detail.Page']
+
+par(mar=c(8,5,5,2))
 plot(hcdn.dend)
 
 clear3d()
@@ -68,10 +70,9 @@ hcdnm=nhclust(scoremat=abam)
 plot(hcdnm, labels=with(dpn, paste(Neuron, side)))
 
 # now, let's colour the clusters
-hcdnm2=hcdnm
-hcdnm2$labels=dpn[,'Detail.Page']
-hcdnm.dend=color_clusters(hcdnm2, k=5)
-par(mar=c(5,8,5,2))
+hcdnm.dend=color_branches(hcdnm, k=5, col=rainbow)
+dendextend::labels(hcdnm.dend)=dpn[labels(hcdnm.dend),'Detail.Page']
+par(mar=c(8,5,5,2))
 plot(hcdnm.dend)
 clear3d()
 plot3d(hcdnm, db=dpn, k=5, soma=8, lwd=2)
