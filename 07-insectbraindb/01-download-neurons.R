@@ -51,21 +51,24 @@ neurons_table=html_table(html("http://www.tedore.net/neurons/"), header=T)[[1]]
 # tidy up column / row names for R
 names(neurons_table)=make.names(names(neurons_table))
 rownames(neurons_table)=neurons_table$Identification.Number
-# make species a factor
-
 
 message("Downloading ", nrow(neurons_table), " neurons")
-tedoren=nlapply(neurons_table$Identification.Number, read.tedore.neuron, .progress='text', OmitFailures=F)
+tedoren=nlapply(neurons_table$Identification.Number, read.tedore.neuron, 
+                .progress='text', OmitFailures=F)
 names(tedoren)=neurons_table$Identification.Number
 
-# attach data.frame then keep only good neurons / metadata
-attr(tedoren, 'df')=neurons_table
+# attach data.frame ...
+tedoren[,]=neurons_table
+# you could also do this like this:
+# data.frame(tedoren)=neurons_table
+
+# then keep only good neurons / metadata
 actual_neurons=sapply(tedoren, is.neuron)
 message("Keeping ", length(actual_neurons)," valid neurons!")
 tedoren.all=tedoren
 tedoren=tedoren[actual_neurons]
 
 # make species a factor (since there are only a few distinct values)
-attr(tedoren, 'df')$Species=factor(attr(tedoren, 'df')$Species)
+tedoren[,'Species']=factor(tedoren[,'Species'])
 save(tedoren, file="tedore_neurons.rda")
 
