@@ -47,7 +47,7 @@ plot3d.skel<-function(sk,col,WithNodes=FALSE,col.node='black',...){
 
 xyzmatrix.skel<-function(x,ConnectedOnly=FALSE,Transpose=FALSE,...) {
   if(ConnectedOnly) stop("Not yet implemented")
-  mx=data.matrix(x$nodes[,1:3])
+  mx=data.matrix(x$nodes[,1:3, drop=FALSE])
   if(Transpose) t(mx) else mx
 }
 
