@@ -7,4 +7,4 @@ library(nat)
 library(rvest)
 
 # set working directory to location of this file
-setwd(dirname(attr(body(function() {}),'srcfile')$filename))
+try(setwd(dirname(attr(body(function() {}),'srcfile')$filename)))
