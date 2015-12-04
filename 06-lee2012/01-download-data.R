@@ -22,5 +22,6 @@ missing_traces=traceurls[!file.exists(tracing_paths)]
 if(!length(missing_traces)) message("All tracings already downloaded!")
 for (i in seq_along(missing_traces)){
   message("Downloading tracing ",i," out of ",length(missing_traces)," ...")
-  download.file(url=missing_traces[i], destfile=file.path("tracings",basename(missing_traces[i])))
+  download.file(url=missing_traces[i], mode='wb',
+                destfile=file.path("tracings",basename(missing_traces[i])))
 }

@@ -8,7 +8,7 @@ for (url in urls){
   localfile=basename(url)
   if(file.exists(localfile)) next
   message("Downloading data ...")
-  t=try(download.file(url,localfile))
+  t=try(download.file(url, localfile, mode='wb'))
   if(inherits(t,'try-error')) {
     message("unable to download ", url)
     next
