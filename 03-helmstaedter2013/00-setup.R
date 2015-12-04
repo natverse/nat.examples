@@ -104,9 +104,32 @@ as.neuron.skel<-function(x, ...) {
 #' Convert Helmstaedter's matlab skel format into nat::ngraph objects
 #' 
 #' @details \code{ngraph} objects are thin wrappers for \code{igraph::graph} 
-#'   objects
+#'   objects.
+#'   
+#'   This function always removes self edges (i.e. when a node is connected to 
+#'   itself), which seem to be used as a placeholder in the Helmstaedter dataset
+#'   when there are no valid edges.
+#'   
+#'   Isolated nodes are also removed by default (i.e. the nodes that are not
+#'   connected by any edges.)
+#' @param remove.isolated Whether or not to remove isolated nodes from the graph
+#'   (see Details).
 #' @inheritParams as.neuron.skel
 #' @seealso \code{\link[nat]{ngraph}}, \code{\link{as.neuron.skel}}
-as.ngraph.skel<-function(x, ...) {
-  ngraph(x$edges, vertexlabels = seq_len(nrow(x$nodes)), xyz=x$nodes, ...)
+as.ngraph.skel<-function(x, remove.isolated=TRUE, ...) {
+  self_edges=x$edges[,1]==x$edges[,2]
+  if(sum(self_edges)>0){
+    if(sum(self_edges)==nrow(x$edges)){
+      # there are only self edges - make a dummy empty edge matrix
+      x$edges=matrix(nrow=0, ncol=2)
+    } else {
+      x$edges[!self_edges, , drop=FALSE]
+    }
+  }
+  ng=ngraph(x$edges, vertexlabels = seq_len(nrow(x$nodes)), xyz=x$nodes, ...)
+  if(remove.isolated){
+    isolated_vertices=igraph::V(ng)[igraph::degree(ng)==0]
+    g=igraph::delete.vertices(graph=ng,isolated_vertices)
+    ng=as.ngraph(g)
+  }
 }
