@@ -1,5 +1,4 @@
 library(R.matlab)
-#skall=readMat('~/projects/MoritzHelmstaedter/retina13/data/kn_e2006_ALLSKELETONS_FINAL2012.mat')
 urls=file.path("http://flybrain.mrc-lmb.cam.ac.uk/si/nat/helmstaedter/",
                c('kn_e2006_ALLSKELETONS_FINAL2012.mat'))
 
@@ -34,11 +33,16 @@ parse.moritz.skel<-function(x){
     if(inherits(y,'array')) apply(y, 1, unlist) else {
       if(is.numeric(y)) drop(y) else y
     }
-  
+  }
   
   r2=sapply(othervars, function(v) process_var(x[v,,]), simplify = FALSE)
   structure(c(r, r2), class=c('skel','list'))
 }
+
+
+# read raw matlab data
+library(R.matlab)
+skall=readMat('kn_e2006_ALLSKELETONS_FINAL2012.mat')
 
 # Convert all the neurons to intermediate skeleton format
 skallp=nlapply(skall$kn.e2006.ALLSKELETONS.FINAL2012, parse.moritz.skel, .progress='text')
