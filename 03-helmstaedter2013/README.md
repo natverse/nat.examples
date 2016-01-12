@@ -37,6 +37,7 @@ setwd("/path/to/nat.examples/03-helmstaedter2013")
 ```
 
 ## TODO
-* Convert to regular neuron rather than special skel datatype
-* include full conversion script in R (currently need to dump single neurons out
-  from matlab because R.matlab has trouble reading the original mat file)
+
+Better integrate [04-convert-neurons-direct-from-matlab.R](04-convert-neurons-direct-from-matlab.R) which 
+* Converts to regular [nat](https://github.com/jefferis/nat/)`::neuron` objects rather than simpler (but one-off) `skel` datatype
+* Directly uses the raw `Helmstaedter_et_al_Nature_2013_skeletons_contacts_matrices.mat` matlab file provided by Helmstaedter et al.
