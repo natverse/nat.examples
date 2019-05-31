@@ -2,6 +2,7 @@ library(R.matlab)
 #skall=readMat('~/projects/MoritzHelmstaedter/retina13/data/kn_e2006_ALLSKELETONS_FINAL2012.mat')
 urls=file.path("http://flybrain.mrc-lmb.cam.ac.uk/si/nat/helmstaedter/",
                c('kn_e2006_ALLSKELETONS_FINAL2012.mat'))
+skall = readMat(urls)
 
 message("Checking for presence of data (160Mb) if necessary ...")
 for (url in urls){
@@ -34,6 +35,7 @@ parse.moritz.skel<-function(x){
     if(inherits(y,'array')) apply(y, 1, unlist) else {
       if(is.numeric(y)) drop(y) else y
     }
+  }
   
   
   r2=sapply(othervars, function(v) process_var(x[v,,]), simplify = FALSE)
@@ -58,3 +60,4 @@ skalln=nlapply(skallp, as.neuron, OmitFailures = TRUE, .progress='text')
 save(skalln, file='skalln.rda')
 # save a zip archive of SWC format neurons for all reconstructions
 write.neurons(skalln, dir='skalln.swc.zip', files=names(skalln), format='swc')
+
