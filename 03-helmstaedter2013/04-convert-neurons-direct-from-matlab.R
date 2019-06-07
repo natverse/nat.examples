@@ -1,8 +1,11 @@
-library(R.matlab)
-#skall=readMat('~/projects/MoritzHelmstaedter/retina13/data/kn_e2006_ALLSKELETONS_FINAL2012.mat')
+# set the scene
+## This script assumed that you have run the file "03-helmstaedter2013/00-setup.R" and "03-helmstaedter2013/01-download.R"
+
+# read
+skall=readMat('03-helmstaedter2013/kn_e2006_ALLSKELETONS_FINAL2012.mat')
 urls=file.path("http://flybrain.mrc-lmb.cam.ac.uk/si/nat/helmstaedter/",
                c('kn_e2006_ALLSKELETONS_FINAL2012.mat'))
-skall = readMat(urls)
+#skall = readMat(urls)
 
 message("Checking for presence of data (160Mb) if necessary ...")
 for (url in urls){
@@ -37,7 +40,6 @@ parse.moritz.skel<-function(x){
     }
   }
   
-  
   r2=sapply(othervars, function(v) process_var(x[v,,]), simplify = FALSE)
   structure(c(r, r2), class=c('skel','list'))
 }
@@ -51,7 +53,6 @@ names(skallp)=sprintf("sk%04d", seq_along(skallp))
 df=as.data.frame(sapply(skeleton_metadata[1:3], drop, simplify = FALSE), 
                  row.names=names(skallp))
 names(df)=sub("kn.e2006.ALLSKELETONS.FINAL2012.","",names(df), fixed = T)
-#df[,c("X","Y","Z","Soma4")]=skeleton_metadata$kn.e2006.ALLSKELETONS.FINAL2012.allSomata[df$cellIDs.pure.forSomata,]
 data.frame(skallp)=df
 
 # convert to nat's neuron representation

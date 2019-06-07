@@ -1,0 +1,21 @@
+if(!require('nat')) install.packages("nat")
+if(!require('devtools')) install.packages("devtools")
+if(!require('nat.nblast')) devtools::install_github('jefferislab/nat.nblast')
+if(!require('stringr')) install.packages("stringr")
+if(!require('dendroextras')) install.packages("dendroextras")
+if(!require('dendextend')) install.packages("dendextend")
+if(!require('lhns')) devtools::install_github('jefferislab/lhns')
+if(!require('nat.flybrains')) devtools::install_github('jefferislab/nat.flybrains')
+if(!require('nat.templatebrains')) devtools::install_github('jefferislab/nat.templatebrains')
+
+library(nat)
+library(nat.nblast)
+library(dendroextras)
+library(dendextend)
+library(stringr)
+library(lhns)
+library(nat.flybrains)
+library(nat.templatebrains)
+
+# set working directory to location of this file
+try(setwd(dirname(attr(body(function() {}),'srcfile')$filename)))
