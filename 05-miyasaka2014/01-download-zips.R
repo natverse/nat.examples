@@ -1,3 +1,6 @@
+## This script assumed that you have run the file "05-miyasaka2014/00-setup.R"
+
+
 urls <- "http://flybrain.mrc-lmb.cam.ac.uk/si/nat/miyasaka/pruned-traces.zip"
 
 message("Downloading data (1.6 MB) if necessary...")

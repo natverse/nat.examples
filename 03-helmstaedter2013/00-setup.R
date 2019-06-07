@@ -1,6 +1,18 @@
 if(!require('nat')) install.packages("nat")
+if(!require('nat.nblast')) install.packages("nat.nblast")
+if(!require('dendextend')) install.packages("dendextend")
+if(!require('R.matlab')) install.packages("R.matlab")
+if(!require('dendroextras')) install.packages("dendroextras")
+if(!require('Morpho')) install.packages("Morpho")
+if(!require('alphashape3d')) install.packages("alphashape3d")
 
 library(nat)
+library(nat.nblast)
+library(dendextend)
+library(dendroextras)
+library(Morpho)
+library(alphashape3d)
+library(R.matlab)
 
 # set working directory to location of this file
 try(setwd(dirname(attr(body(function() {}),'srcfile')$filename)))
