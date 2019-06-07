@@ -7,5 +7,6 @@
 *.mat
 *.rds
 06-lee2012/flycircuit.boundingbox.txt
-.Rproj.user
-.Rhistory
+*.Rproj.user
+*.Rhistory
+*.RData
