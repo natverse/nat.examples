@@ -1,9 +1,18 @@
 nat.examples
 ============
 
-Example code for the NeuroAnatomy Toolbox ([nat](https://github.com/jefferis/nat)) R package
+Sample code for the NeuroAnatomy Toolbox ([nat](https://github.com/jefferis/nat)) R package
 
-# Using these examples
+## Contents
+01. Library installation and basic example
+02. Grosjean et al 2011 Drosophila Projection Neuron Data
+03. Helmstaedter et al 2013 Mouse Retinal Connectome
+04. Sumbul et al 2014 Mouse Retinal Ganglion Cells
+05. Miyasaka et al 2014 Zebrafish Mitral Cell Projectome
+06. Lee et al 2012 Traced Drosophila neurons
+07. Heinze et al 2013 Traced Monarch butterfly neurons
+
+## Using these examples
 
 1. Install [R](http://cran.r-project.org/) for your platform
 2. Optionally install [RStudio IDE](http://www.rstudio.com/ide/download/)
@@ -32,15 +41,6 @@ setwd('/path/to/nat.examples/02-grosjean20011/')
 
 Once you have run the `00-setup.R` script you can start start running bits of
 code interactively (e.g. with copy paste or RStudio's "Run selection* menu option).
-
-## Contents
-01. Library installation and basic example
-02. Grosjean et al 2011 Drosophila Projection Neuron Data
-03. Helmstaedter et al 2013 Mouse Retinal Connectome (still in progress)
-04. Sumbul et al 2014 Mouse Retinal Ganglion Cells
-05. Miyasaka et al 2014 Zebrafish Mitral Cell Projectome
-06. Lee et al 2012 Traced Drosophila neurons
-07. Heinze et al 2013 Traced Monarch butterfly neurons
 
 ## Acknowledgements
 We insist that you cite the original authors of each study if you make use of

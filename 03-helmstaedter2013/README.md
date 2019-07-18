@@ -7,6 +7,16 @@ AffiliationsContributionsCorresponding author
 
 Nature 500, 168–174 (08 August 2013) [doi:10.1038/nature12346](http://dx.doi.org/10.1038/nature12346)
 
+## Raw data
+
+The website primary data source for this code is not provided in the SI accompanying the original Nature article, but is linked from the last sentence of the Discussion.
+
+* http://www.neuro.mpg.de/connectomics
+
+We used this file:
+
+* http://neuro.rzg.mpg.de/download/Helmstaedter_et_al_Nature_2013_skeletons_contacts_matrices.mat
+
 ## Warnings
 The cell type labelled as "glia" needs verification. Only one unique skeleton 
 for each cell is included in the packaged dataset – although 4-6 were typically
@@ -27,6 +37,7 @@ setwd("/path/to/nat.examples/03-helmstaedter2013")
 ```
 
 ## TODO
-* Convert to regular neuron rather than special skel datatype
-* include full conversion script in R (currently need to dump single neurons out
-  from matlab because R.matlab has trouble reading the original mat file)
+
+Better integrate [04-convert-neurons-direct-from-matlab.R](04-convert-neurons-direct-from-matlab.R) which 
+* Converts to regular [nat](https://github.com/jefferis/nat/)`::neuron` objects rather than simpler (but one-off) `skel` datatype
+* Directly uses the raw `Helmstaedter_et_al_Nature_2013_skeletons_contacts_matrices.mat` matlab file provided by Helmstaedter et al.
