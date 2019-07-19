@@ -87,13 +87,17 @@ if(!require('alphashape3d')) install.packages("alphashape3d")
 if(!require('pbapply')) install.packages("pbapply")
 
 ## Create function to calculate volume
-calculate_volume <- function(brain, neuropil = NULL, alpha = 10, scale = 1e-9, method = c("convhull","ashape")){
+calculate_volume <- function(brain, neuropil = NULL, alpha = 10, scale = 1e-9, method = c("convhull","ashape"), resample = 0.1, ...){
   method = match.arg(method)
   if(is.null(neuropil)){
-    points = unique(nat::xyzmatrix(brain))
-  }else{
-    points = unique(nat::xyzmatrix(subset(brain, neuropil)))
+    brain = subset(brain, neuropil)
   }
+  if(resample){
+    brain = vcgUniformRemesh(as.mesh3d(brain), voxelSize = resample, offset = 0, discretize = FALSE,
+                             multiSample = FALSE, absDist = FALSE, mergeClost = FALSE,
+                             silent = FALSE)
+  }
+  points = unique(nat::xyzmatrix(subset(brain, neuropil)))
   if(method=="ashape"){
     a = alphashape3d::ashape3d(points, alpha = alpha, pert = TRUE)
     volume_ashape3d(a)*scale # convert to mm3
@@ -101,7 +105,7 @@ calculate_volume <- function(brain, neuropil = NULL, alpha = 10, scale = 1e-9, m
     geometry::convhulln(points, output.options = "FA")$vol*scale
   }
 }
-## This was of calculatign volumes doesn't seem terribly accurate though, very sensitive to alpha value?
+## This was of calculating volumes doesn't seem terribly accurate though, very sensitive to alpha value?
 
 ## Get the volumes for the whole brain
 insect.brain.volumes = pbapply::pbsapply(insect.brains.with.al, calculate_volume, neuropil = NULL)
