@@ -14,15 +14,16 @@ species.order = a[order(a$x, decreasing = TRUE),]$Group.1
 principals.summary$species = factor(principals.summary$species, levels = species.order)
 
 ## Now we can explore things, lke the density of branchpoints
-pdf("images/nat_neuromorpho_principals_branchpoints_over_cable.pdf", width = 10, height = 7)
+pdf("images/nat_neuromorpho_principals_branchpoints_over_cable.pdf", width = 7, height = 10)
 principals.summary = subset(principals.summary, branchpoints/cable.length < 0.02)
 ggplot(principals.summary, aes(x=species, y=branchpoints/cable.length, color=species)) +
   geom_jitter()+
-  geom_boxplot(position=position_dodge(0.8), col = "darkgrey", alpha = 0)+
+  geom_boxplot(position=position_dodge(0.8), col = "black", alpha = 0)+
   theme_minimal() +
   theme(text = element_text(size=20),
         axis.text.x = element_text(angle=90, hjust=1),
-        legend.position="none")
+        legend.position="none") + 
+  coord_flip()
 dev.off()
 
 ## Or the volume of the bounding box around each neuron
@@ -73,12 +74,14 @@ for(i in 1:length(principals.sholl)){
   df = rbind(df, ps)
 }
 a = aggregate(df$intersection, list(df$species, df$radii), mean)
+b = aggregate(df$intersection, list(df$species, df$radii), sd)
 colnames(a) = c("species","radii","intersections")
+a$sd = b$x
 
 # Plot
 a$species = factor(a$species, levels = species.order)
 pdf("images/nat_neuromorpho_principals_sholl.pdf", width = 10, height = 7)
-ggplot(a, aes(x=radii, y=intersections, color=species)) +
+ggplot(subset(a, species %in% c("elephant","giraffe","humpback whale", "human", "rabbit", "baboon", "rat")), aes(x=radii, y=intersections, color=species)) +
   geom_line()+
   theme_minimal()
 dev.off()

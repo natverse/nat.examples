@@ -3,6 +3,7 @@
 
 # load the neuronlist class skeleton data that we have made
 load('skn.rda')
+skn = subset(skn, stypeid != 0)
 load("skeleton_metadata.rda")
 soma.points = t(t(skeleton_metadata$kn.e2006.ALLSKELETONS.FINAL2012.allSomata[,1:3])*c(16.5,16.5,25))
 
@@ -62,18 +63,57 @@ spheres3d(soma.points, radius = 2000, col = rainbow(nrow(soma.points))[sample(nr
 plot3d(retina.chunk, alpha = 0.1, col = "lightgrey", add = TRUE)
 rgl.snapshot(filename ="images/mouse_inner_plexiform_neurons_uncoloured.png" ,fmt = "png")
 
+# types
+amacrine = subset(skn, class == "amacrine")
+bipolar = subset(skn, class == "bipolar")
+glia = subset(skn, class == "glial"&cellid.soma<1161)
+ganglion = subset(skn, class == "ganglion")
+
 # and now, coloured by cell type
 clear3d()
-plot3d(subset(skn, class == "amacrine"), col = "red")
-spheres3d(soma.points[subset(skn, class == "amacrine")[,"cellid.soma"],],radius = 2000, col = "darkred")
-plot3d(subset(skn, class == "bipolar"), col = "green")
-spheres3d(soma.points[subset(skn, class == "bipolar")[,"cellid.soma"],],radius = 2000, col = "darkgreen")
-plot3d(subset(skn, class == "ganglion"), col = "cyan")
-spheres3d(soma.points[subset(skn, class == "ganglion")[,"cellid.soma"],],radius = 2000, col = "blue")
-plot3d(subset(skn, class == "glial"), col = "magenta")
-spheres3d(soma.points[subset(skn, class == "glial"&cellid.soma<1161)[,"cellid.soma"],],radius = 2000, col = "purple")
+plot3d(amacrine, col = "red")
+spheres3d(soma.points[amacrine[,"cellid.soma"],],radius = 2000, col = "darkred")
+plot3d(bipolar, col = "cyan")
+spheres3d(soma.points[bipolar[,"cellid.soma"],],radius = 2000, col = "blue")
+plot3d(ganglion, col = "green")
+spheres3d(soma.points[ganglion[,"cellid.soma"],],radius = 2000, col = "darkgreen")
+plot3d(glia, col = "magenta")
+spheres3d(soma.points[glia[,"cellid.soma"],],radius = 2000, col = "purple")
 plot3d(retina.chunk, alpha = 0.1, col = "lightgrey", add = TRUE)
 rgl.snapshot(filename ="images/mouse_inner_plexiform_neurons.png" ,fmt = "png")
+
+# and now, colour by subtype
+clear3d()
+plot3d(retina.chunk, alpha = 0.1, col = "lightgrey", add = TRUE)
+cols = rainbow(length(unique(amacrine[,"stypeid"])))
+names(cols) = unique(amacrine[,"stypeid"])
+plot3d(amacrine, col = cols[as.character(amacrine[,"stypeid"])])
+spheres3d(soma.points[amacrine[,"cellid.soma"],],radius = 2000, col = cols[as.character(amacrine[,"stypeid"])])
+rgl.snapshot(filename ="images/mouse_inner_plexiform_amacrine_types.png" ,fmt = "png")
+
+clear3d()
+plot3d(retina.chunk, alpha = 0.1, col = "lightgrey", add = TRUE)
+cols = rainbow(length(unique(bipolar[,"stypeid"])))
+names(cols) = unique(bipolar[,"stypeid"])
+plot3d(bipolar, col = cols[as.character(bipolar[,"stypeid"])])
+spheres3d(soma.points[bipolar[,"cellid.soma"],],radius = 2000, col = cols[as.character(bipolar[,"stypeid"])])
+rgl.snapshot(filename ="images/mouse_inner_plexiform_bipolar_types.png" ,fmt = "png")
+
+clear3d()
+plot3d(retina.chunk, alpha = 0.1, col = "lightgrey", add = TRUE)
+cols = rainbow(length(unique(ganglion[,"stypeid"])))
+names(cols) = unique(ganglion[,"stypeid"])
+plot3d(ganglion, col = cols[as.character(ganglion[,"stypeid"])])
+spheres3d(soma.points[ganglion[,"cellid.soma"],],radius = 2000, col = cols[as.character(ganglion[,"stypeid"])])
+rgl.snapshot(filename ="images/mouse_inner_plexiform_ganglion_types.png" ,fmt = "png")
+
+clear3d()
+plot3d(retina.chunk, alpha = 0.1, col = "lightgrey", add = TRUE)
+cols = rainbow(length(unique(glia[,"stypeid"])))
+names(cols) = unique(glia[,"stypeid"])
+plot3d(glia, col = cols[as.character(glia[,"stypeid"])])
+spheres3d(soma.points[glia[,"cellid.soma"],],radius = 2000, col = cols[as.character(glia[,"stypeid"])])
+rgl.snapshot(filename ="images/mouse_inner_plexiform_glia_types.png" ,fmt = "png")
 
 # show the result of an in situ NBLAST, for neurons with a soma and over a certain cable length
 k = 24
@@ -99,7 +139,7 @@ rgl.snapshot(filename = "images/nat_mouse_retina_nblast_neurons.png", fmt = "png
 
 # Show the result of an NBLAST, now for zeroed neurons
 skn.zeroed.dps = dotprops(skn_zeroed, stepsize = 1000, OmitFailures = TRUE)/1000
-result_zeroed = nblast_allbyall(skn.zeroed.dps, normalisation = "mean")
+result_zeroed = nblast_allbyall(skn.zeroed.dps, normalisation = "raw")
 pdf("images/nat_mouse_retina_nblast_zeroed_dendrogram.pdf", width = 5, height = 3)
 hclust=nhclust(scoremat = result_zeroed)
 dkcs=colour_clusters(hclust, k = k) %>% set("branches_lwd", 2)
@@ -138,3 +178,45 @@ for(i in 1:k){
   rgl.snapshot(filename = paste0("images/nat_mouse_retina_nblast_zeroed_neurons_",i,"_", nam,".png"), fmt = "png")
 }
 
+# Show tSNE plot
+nb <- result_zeroed
+nb_scaled <- scale(nb)
+nb = as.data.frame(nb)
+
+## Curating the database for analysis with both t-SNE and PCA
+labels <- skn_zeroed[,"stypeid"]
+
+## for plotting
+colors = rainbow(length(unique(labels)))
+names(colors) = unique(labels)
+
+# Skeleton.types
+shapes = skn_zeroed[rownames(nb),"class"]
+shapes = as.character(shapes)
+
+## Executing the algorithm on our data
+tsne <- Rtsne(nb, dims = 2, perplexity=30, verbose=TRUE, max_iter = 20000, 
+              pca  = TRUE, initial_dims = 50, pca_center = TRUE, 
+              pca_scale = TRUE, check_duplicates = FALSE)
+
+# Ggplot
+tsne.df <- data.frame(tSNE1 = tsne$Y[,1], tSNE2 = tsne$Y[,2], col = colors[labels], cell.type = labels, shape = shapes)
+tsne.df <- subset(tsne.df, shape != "")
+hull_cyl <- tsne.df %>%
+  group_by(cell.type, shape) %>%
+  slice(chull(tSNE1, tSNE2))
+pdf("images/nat_retinal_NBLAST_tSNE.pdf", width = 10, height = 5)
+ggplot(tsne.df) + 
+  geom_point(aes(x=tSNE1, y=tSNE2, color= as.character(cell.type), shape = as.character(shape))) + 
+  #geom_text_repel(aes(tSNE1, tSNE2, label = mcfo.labels)) + 
+  scale_shape_manual(values = c(16, 17, 15, 1)) +
+  theme(legend.position="none") + 
+  geom_polygon(aes(x = tSNE1, y = tSNE2, fill = as.character(cell.type)),alpha = 0.1)+
+  theme_minimal() +
+  guides(fill=FALSE, color = FALSE, shape = FALSE) + 
+  ggtitle("")
+dev.off()
+# circles, amacrine
+# triangles, bipolar
+# square, ganglion
+# open cirlces, glia

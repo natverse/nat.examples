@@ -6,8 +6,10 @@
 *.zip
 *.mat
 *.rds
+*.rda
 06-lee2012/flycircuit.boundingbox.txt
 *.Rproj.user
 *.Rhistory
 *.RData
 *.pdf
+.Rproj.user
