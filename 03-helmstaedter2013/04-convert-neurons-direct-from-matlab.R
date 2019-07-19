@@ -1,11 +1,14 @@
 # set the scene
 ## This script assumed that you have run the file "03-helmstaedter2013/00-setup.R" and "03-helmstaedter2013/01-download.R"
 
-# read
-skall=readMat('03-helmstaedter2013/kn_e2006_ALLSKELETONS_FINAL2012.mat')
+# get data
+library(R.matlab)
 urls=file.path("http://flybrain.mrc-lmb.cam.ac.uk/si/nat/helmstaedter/",
                c('kn_e2006_ALLSKELETONS_FINAL2012.mat'))
-#skall = readMat(urls)
+skall = readMat(urls)
+
+# or read it
+skall=readMat('03-helmstaedter2013/kn_e2006_ALLSKELETONS_FINAL2012.mat')
 
 message("Checking for presence of data (160Mb) if necessary ...")
 for (url in urls){
@@ -43,6 +46,11 @@ parse.moritz.skel<-function(x){
   r2=sapply(othervars, function(v) process_var(x[v,,]), simplify = FALSE)
   structure(c(r, r2), class=c('skel','list'))
 }
+
+
+# read raw matlab data
+library(R.matlab)
+skall=readMat('kn_e2006_ALLSKELETONS_FINAL2012.mat')
 
 # Convert all the neurons to intermediate skeleton format
 skallp=nlapply(skall$kn.e2006.ALLSKELETONS.FINAL2012, parse.moritz.skel, .progress='text')
