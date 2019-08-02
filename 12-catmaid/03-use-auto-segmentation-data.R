@@ -1,6 +1,11 @@
 ### This script assumes you have run "/12-catmaid/00-setup.R"
 
 # The aim here is to use auto-segmentation to turn a manually traced, EM skeleton into a volumetric neuron!
+# Choose which brainmaps volume to look at
+volume.key = "brainmaps://772153499790:fafb_v14:fafb14_v00c_split4xfill2x_flatresegwhitened16_32_4_skeleton32nm512_nnconn165_mc10000_e250_prune10_thresh1000_sparse250" # Li et al. 2019 preprint
+volume = fafbseg:::brainmaps_volume(volume.key)
+options(fafbseg.skeletonuri = volume.key,
+fafbseg.brainmaps.volume = volume)
 
 # Connect to the public FAFB instance (Zheng et al. 2018) hosted publicly by Virtual Fly Brain
 adult.conn = catmaid_login(server="https://catmaid-fafb.virtualflybrain.org/")
