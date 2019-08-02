@@ -1,3 +1,6 @@
+## Note, to use this example, save data from the open worm project in data/generatedNeuroML
+### The data can be found here: https://github.com/openworm/CElegansNeuroML/tree/master/CElegans/generatedNeuroML
+
 # install
 if(!require('devtools')) install.packages("devtools")
 if(!require('tidyverse')) install.packages("tidyverse")
