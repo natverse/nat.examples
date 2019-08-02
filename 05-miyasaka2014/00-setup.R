@@ -1,10 +1,16 @@
-if(!require('nat')) install.packages("nat")
+# install
 if(!require('devtools')) install.packages("devtools")
-if(!require('nat.nblast')) devtools::install_github('jefferislab/nat.nblast')
-if(!require('stringr')) install.packages("stringr")
-if(!require('dendroextras')) install.packages("dendroextras")
+if(!require('tidyverse')) install.packages("tidyverse")
+if(!require('natverse')) devtools::install_github("natverse/natverse")
 
-library(nat)
+# load natversee functions
+library(natverse)
+library(tidyverse)
 
 # set working directory to location of this file
-setwd(dirname(attr(body(function() {}),'srcfile')$filename))
+try(setwd(dirname(attr(body(function() {}),'srcfile')$filename)))
+
+# load data from previoous sessions
+if (exists(".RData")){
+    load(".RData")
+}
