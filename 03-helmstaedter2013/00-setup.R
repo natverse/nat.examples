@@ -1,6 +1,18 @@
 if(!require('nat')) install.packages("nat")
+if(!require('nat.nblast')) install.packages("nat.nblast")
+if(!require('dendextend')) install.packages("dendextend")
+if(!require('R.matlab')) install.packages("R.matlab")
+if(!require('Morpho')) install.packages("Morpho")
+if(!require('alphashape3d')) install.packages("alphashape3d")
+if(!require('Rtsne')) install.packages("Rtsne")
 
 library(nat)
+library(nat.nblast)
+library(dendextend)
+library(Morpho)
+library(alphashape3d)
+library(R.matlab)
+library(Rtsne)
 
 # set working directory to location of this file
 try(setwd(dirname(attr(body(function() {}),'srcfile')$filename)))
@@ -133,3 +145,6 @@ as.ngraph.skel<-function(x, remove.isolated=TRUE, ...) {
     ng=as.ngraph(g)
   }
 }
+
+# Load data from previous session
+# load(".RData")
