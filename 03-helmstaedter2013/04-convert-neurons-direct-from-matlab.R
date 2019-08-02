@@ -1,6 +1,15 @@
+# set the scene
+## This script assumed that you have run the file "03-helmstaedter2013/00-setup.R" and "03-helmstaedter2013/01-download.R"
+
+# get from source
 library(R.matlab)
 urls=file.path("http://flybrain.mrc-lmb.cam.ac.uk/si/nat/helmstaedter/",
                c('kn_e2006_ALLSKELETONS_FINAL2012.mat'))
+skall = readMat(urls)
+
+# or read from saved
+skall=readMat('03-helmstaedter2013/kn_e2006_ALLSKELETONS_FINAL2012.mat')
+
 
 message("Checking for presence of data (160Mb) if necessary ...")
 for (url in urls){
@@ -53,7 +62,6 @@ names(skallp)=sprintf("sk%04d", seq_along(skallp))
 df=as.data.frame(sapply(skeleton_metadata[1:3], drop, simplify = FALSE), 
                  row.names=names(skallp))
 names(df)=sub("kn.e2006.ALLSKELETONS.FINAL2012.","",names(df), fixed = T)
-#df[,c("X","Y","Z","Soma4")]=skeleton_metadata$kn.e2006.ALLSKELETONS.FINAL2012.allSomata[df$cellIDs.pure.forSomata,]
 data.frame(skallp)=df
 
 # convert to nat's neuron representation
@@ -62,3 +70,4 @@ skalln=nlapply(skallp, as.neuron, OmitFailures = TRUE, .progress='text')
 save(skalln, file='skalln.rda')
 # save a zip archive of SWC format neurons for all reconstructions
 write.neurons(skalln, dir='skalln.swc.zip', files=names(skalln), format='swc')
+
