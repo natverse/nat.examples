@@ -1,10 +1,21 @@
-if(!require('nat')) install.packages("nat")
+# install
+if(!require('devtools')) install.packages("devtools")
+if(!require('tidyverse')) install.packages("tidyverse")
+if(!require('natverse')) devtools::install_github("natverse/natverse")
 if(!require('rvest')) install.packages("rvest")
-if(!require('nat.nblast')) install.packages("nat.nblast")
-if(!require('dendextend')) install.packages("dendextend")
+if(!require('ggplot2')) install.packages("ggplot2")
+if(!require('Rtsne')) install.packages("Rtsne")
 
-library(nat)
-library(rvest)
+# load natversee functions
+library(natverse)
+library(ggplot2)
+library(Rtsne)
 
 # set working directory to location of this file
 try(setwd(dirname(attr(body(function() {}),'srcfile')$filename)))
+
+# load data from previoous sessions
+if (exists(".RData")){
+    load(".RData")
+}
+
