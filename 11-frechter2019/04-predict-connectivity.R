@@ -7,10 +7,6 @@
 # into 25 clusters, and using the nodes of the neurons in each cluster to generate a kernel density estimate in 3D space. 
 # Each point in each input and LHN dendrite will then be given a score that represents it inclusion within each
 # of the 25 3D kernel density plots.
-# 
-# (The result might be quite different if we use the input axons to define the voxels, rather than the outputs' dendrites,
-# compared with the opposite scenario. We will look at both options, and compare with an NBlast clustering of severed dendrites
-# and axons within the LH volume as well, for good measure)
 #   
 # We will also break down the output zones of the LH into 25 different voxels. This time, the LHON 
 # axons are morphologically clustered via NBlast and the kernel density estimates are built on these 25 point clouds.
@@ -22,8 +18,7 @@
 # Get LH input neurons
 inputs = lhns::most.lhins
 inputs = subset(inputs,!anatomy.group%in%c("Centrifugal","notLHproper","MBON-a'2-a'3")) # Remove non-PNs
-upns = subset(inputs,type=="uPN" & !is.na(glomerulus))
-pns = c(pn.axons.light, upns)
+inputs = c(lhns::pn.axons.light, inputs)
 
 # Choose which are LHONs
 lhns.chosen = subset(lhns::most.lhns,cell.type!="notLHproper")
@@ -38,7 +33,6 @@ lhn.dendrites.lh = prune_in_volume(lhn.dendrites, neuropil = "LH_R",OmitFailures
 # Neurons belonging to large cell types and dye fills
 big.cts = names(table(most.lhns[,"cell.type"]))[table(most.lhns[,"cell.type"])>2]
 bigs = subset(most.lhns,cell.type%in%big.cts&coreLH=="TRUE")
-bigs = c(bigs,dye.fills[!names(dye.fills)%in%names(bigs)])
 bigs[is.na(bigs[,"type"]),"type"] = "LN"
 
 # Get LH volumes
@@ -55,11 +49,11 @@ lhr = as.mesh3d(LHR)
 ### Generate Super Voxels ###
 #############################
 
-
 # Number of super voxels that we want to create
 clust.no = 25
 
-# NBLAST the input axons
+# Let's just see what happens if we cluster these arbours as they are
+### NBLAST the input axons
 neuropil = LHR
 points = xyzmatrix(inputs)
 points = points[inashape3d(points=points,as3d=LHR),]
@@ -73,40 +67,9 @@ grp.input.nat = cutree(clust.nat,k=clust.no)
 plot(fsc,leaflab="none",main="NBlast Clustering of Input Axons")
 
 # Break axons into anatomical clusters, but remove high Strahler order branches
-inputs.strahler = assign_strahler(inputs[sapply(inputs, function(x) x$nTrees==1)], OmitFailures = TRUE)
-inputs.fragments = neuronlist()
-for(ii in 1:length(inputs.strahler)){
-  id = names(inputs.strahler[ii])
-  df = inputs.strahler[ii][,]
-  i = inputs.strahler[id][[1]]
-  x = inputs.strahler[id][[1]]
-  relevant.points = subset(x$d, PointNo%in%i$d$PointNo)
-  i$d$strahler_order = relevant.points[match(i$d$PointNo,relevant.points$PointNo),]$strahler_order
-  s = max(i$d$strahler_order)
-  if(s>1){
-    v = rownames(subset(i$d,strahler_order%in%c(s)))
-    i = nat::prune_vertices(i, verticestoprune = v, invert = FALSE)
-    relevant.points = subset(x$d, PointNo%in%i$d$PointNo)
-    i$d$strahler_order = relevant.points[match(i$d$PointNo,relevant.points$PointNo),]$strahler_order
-    for(t in 1:i$nTrees){
-      if(length(unlist(i$SubTrees[t]))>1){
-        subt = subtree(i, subtree = t)
-        subt = as.neuronlist(subt)
-        attr(subt,"df") = df
-        names(subt) = paste0(id,"_",t)
-        inputs.fragments = c(inputs.fragments,subt)  
-      }
-    }
-  }else{
-    i = as.neuronlist(i)
-    attr(i,"df") = df
-    names(i) = paste0(id,"_",t)
-    inputs.fragments = c(inputs.fragments,as.neuronlist(i))
-  }
-}
-inputs.fragments = inputs.fragments[summary(inputs.fragments)$cable.length>12] # Get rid of the short ones
-inputs.fragments = nlapply(inputs.fragments, nat::prune, target = points, keep = 'near', maxdist = 0,OmitFailures=T)
-inputs.fragments.dps = dotprops(inputs.fragments, OmitFailures = TRUE)
+inputs.fragments = remove_highest_strahler(someneuronlist = inputs, neuropil = "LH_R") # 7174 fragments
+inputs.fragments = inputs.fragments[summary(inputs.fragments)$cable.length>10] # Get rid of the short ones
+inputs.fragments.dps = dotprops(inputs.fragments, OmitFailures = TRUE, resample = 0.1) # 2652 fragments
 
 # NBLAST these axon fragments
 inputs.fragments.morph = nblast_allbyall(inputs.fragments.dps, normalisation = "mean", distance = F)
@@ -116,22 +79,50 @@ grp.input.nat.frag = cutree(clust.nat.frag,k=clust.no)
 plot(fsc2,leaflab="none",main="NBlast Clustering of Fragmented Input Axons")
 
 # Voxelise brain by PN domains
-ims1 = list()
-for(n in sort(unique(grp.input.nat.frag))){
-  l = n
-  points = xyzmatrix(inputs.fragments[names(grp.input.nat.frag)[grp.input.nat.frag==n]])
-  H.pi <- Hpi(points,binned=TRUE)
-  fhat <- kde(points, H=H.pi, xmin = boundingbox(FCWBNP.surf)[1,], xmax = boundingbox(FCWBNP.surf)[2,], w = rep(1/nrow(points),nrow(points))) # Area under curve = 1
-  i = im3d(fhat$estimate,BoundingBox=boundingbox(FCWBNP.surf))
-  attr(i,"contours") = fhat$cont
-  attr(i,"fhat") = fhat
-  ims1[[n]] <- i
-}
-names(ims1) = 1:length(ims1)
+ims1 = calculate_voxels(inputs.fragments, grp.input.nat.frag, lhr)
 lhn.dendrites.marked.1 = nlapply(lhn.dendrites,assign_supervoxel.neuron,ims=ims1)
 
+# To make sense of what we just did, let's have a look at this DA2 PN as an example
+nopen3d(userMatrix = structure(c(0.992447674274445, 0.0267316102981567, 
+                                 0.119722224771976, 0, 0.0416060760617256, -0.991469442844391, 
+                                 -0.123521246016026, 0, 0.115398973226547, 0.12756934762001, -0.985093414783478, 
+                                 0, 2.20140728769467, 1.7749549958703, 26.571202402014, 1), .Dim = c(4L, 
+                                                                                                     4L)), zoom = 0.699999988079071, windowRect = c(1440L, 45L, 2726L, 
+                                                                                                                                                    961L))
+fc.id = "Cha-F-100085"
+example.cols = c(lacroix["red"],lacroix["green"],lacroix["blue"])
+plot3d(inputs[fc.id], lwd = 3, col = "grey30", soma= TRUE) # show chosen neuron
+plot3d(lhns.chosen["5HT1A-F-300013"], lwd = 3, col = "grey70", soma= TRUE) # show output neuron
+plot3d(subset(FCWBNP.surf,"LH_R"), col = 'grey', alpha = 0.1)
+rgl.snapshot(file = "images/LH_DA2_PN.png", fmt = "png")
+clear3d() # now show the cut up branches
+example.branches = inputs.fragments[grepl(fc.id, names(inputs.fragments))]
+plot3d(example.branches, lwd = 3, soma = FALSE, col = example.cols)
+plot3d(inputs[fc.id], lwd = 3, col = "grey30", soma= TRUE)
+plot3d(subset(FCWBNP.surf,"LH_R"), col = 'grey', alpha = 0.1)
+rgl.snapshot(file = "images/Remove_Highest_Strahler_LH_DA2_PN.png", fmt = "png")
+example.input.groups = grp.input.nat.frag[names(example.branches)] # and now the corresponding NBLAST clusters
+example.input.groups = example.input.groups[!is.na(example.input.groups)]
+plot3d(inputs.fragments[names(grp.input.nat.frag)[grp.input.nat.frag==example.input.groups[1]]], col = lacroix["red"])
+plot3d(inputs.fragments[names(grp.input.nat.frag)[grp.input.nat.frag==example.input.groups[2]]], col = lacroix["green"])
+plot3d(inputs.fragments[names(grp.input.nat.frag)[grp.input.nat.frag==example.input.groups[3]]], col = lacroix["blue"])
+rgl.snapshot(file = "images/Remove_Highest_Strahler_LH_DA2_PN_NBLAST_groups.png", fmt = "png")
+clear3d()
+plot3d(example.branches, lwd = 3, soma = FALSE)
+plot3d(inputs[fc.id], lwd = 3, col = "grey30", soma= TRUE)
+plot3d(subset(FCWBNP.surf,"LH_R"), col = 'grey', alpha = 0.1)
+for(c in seq_along(example.input.groups)){
+  g = example.input.groups[c]
+  fhat = attr(ims1[[g]], "fhat")
+  col = example.cols[c]
+  plot(fhat,cont=c(20,70),colors=c(col,col),drawpoints=F
+       ,xlab="", ylab="", zlab="",size=2, ptcol="white", add=TRUE, box=FALSE, axes=FALSE)
+}
+rgl.snapshot(file = "images/Remove_Highest_Strahler_LH_DA2_PN_voxels.png", fmt = "png")
+
 # Now we can look at output regions, elsewhere in the brain
-lhon.axons.dps = dotprops(lhn.axons, OmitFailures = TRUE)
+lhn.axons.frag = remove_highest_strahler(lhns.chosen, prune_function = catnat:::axonic_cable.neuron)
+lhon.axons.dps = dotprops(lhn.axons.frag, OmitFailures = TRUE, resample = 0.1)
 lhon.axon.morph = nblast_allbyall(lhon.axons.dps, normalisation = "mean", distance = F)
 clust.nat.2 = nhclust(scoremat = lhon.axon.morph, method = "ward.D2")
 fsc=dendroextras::color_clusters(clust.nat.2, k=clust.no)
@@ -139,19 +130,7 @@ plot(fsc,leaflab = "none")
 grp.nat <- cutree(clust.nat.2, k = clust.no)
 
 # Calculate voxel scores
-ims2 = list()
-for(n in sort(unique(grp.nat))){
-  l = n
-  points = catnat:::axonic.points.neuronlist(lhn.axons[names(lhn.axons)%in%names(grp.nat)[grp.nat==n]])
-  # call the plug-in bandwidth estimator
-  H.pi <- Hpi(points,binned=TRUE) ## b is a matrix of x,y,z points
-  fhat <- kde(points, H=H.pi, xmax = boundingbox(FCWB)[2,],xmin = boundingbox(FCWB)[1,])
-  i = im3d(fhat$estimate,BoundingBox=boundingbox(FCWB))
-  attr(i,"contours") = fhat$cont
-  attr(i,"fhat") = fhat
-  ims2[[n]] <- i
-}
-names(ims2) = 1:length(ims2)
+ims2 = calculate_voxels(lhn.axons.frag, grp.nat, FCWB)
 lhn.axons.marked.2 = nlapply(lhn.axons,assign_supervoxel.neuron,ims=ims2)
 
 #######################################
@@ -161,13 +140,12 @@ lhn.axons.marked.2 = nlapply(lhn.axons,assign_supervoxel.neuron,ims=ims2)
 # Big cell types
 bigs.marked = subset(lhn.dendrites.marked.1, cell.type%in%bigs[,"cell.type"])
 bigs.lns.marked = nlapply(subset(most.lhns, cell.type%in%subset(bigs,type=="LN")[,"cell.type"]),assign_supervoxel.neuron,ims=ims1)
-bigs.marked = c(bigs.marked,bigs.lns.marked)
+bigs.marked = c(bigs.marked,bigs.lns.marked[setdiff(names(bigs.lns.marked),names(bigs.marked))])
 
 # uPNs
 pns.termini = subset(pns.termini,!Glomerulus%in%c("VL2pP"))
 pns.marked = nlapply(pns.termini,assign_supervoxel.neuron,ims=ims1)
 p.df = attr(pns.marked,"df")
-p.df[is.na(p.df$Glomerulus),]$Glomerulus = "V"
 attr(pns.marked,"df") = p.df
 
 # Calculate for PN axons
@@ -187,6 +165,7 @@ for (ct in cts){ # Average cell types
   pns.overlap.matrix[,ct] = pn.scores
 }
 rownames(pns.overlap.matrix) = paste0(1:nrow(pns.overlap.matrix),"i")# Columns are letters for the LH regions
+cts[cts=="1"] = "V"
 colnames(pns.overlap.matrix) = cts
 pns.overlap.matrix.norm = apply(pns.overlap.matrix,2,function(x)x/max(x)) # Normalise axonic output
 pns.rowclus = color_clusters(hclust(dist(pns.overlap.matrix,method = "euclidean"), method = "ward.D2" ),k=7)
@@ -255,7 +234,7 @@ bigs.overlap.matrix.norm = apply(bigs.overlap.matrix,2,function(x)x/max(x)) # No
 bigs.overlap.matrix.norm.2 = t(apply(bigs.overlap.matrix,1,function(x)x/max(x))) # Normalise dendritic input
 bigs.overlap.matrix.norm[is.na(bigs.overlap.matrix.norm)] = 0
 # Colors
-bigs.cols = ifelse(colnames(bigs.overlap.matrix.norm)%in%subset(bigs,type=="LN")[,"cell.type"],"green","blue")
+bigs.cols = ifelse(colnames(bigs.overlap.matrix.norm)%in%subset(bigs,type=="LN")[,"cell.type"],lacroix["green"],lacroix["blue"])
 # Cluster columns
 bigs.colclus =hclust(dist(t(bigs.overlap.matrix.norm),method = "euclidean"), method = "ward.D2" )
 bigs.colclus = dendextend::set(as.dendrogram(bigs.colclus),"branches_lwd",3)
@@ -265,6 +244,7 @@ LHnormaliser = matrix(LHpointssummed,ncol=clust.no,nrow=clust.no, byrow = TRUE)
 
 # Cell types
 cts = unique(lhn.axons.marked.2[,"cell.type"])[!is.na(unique(lhn.axons.marked.2[,"cell.type"]))]
+overlap.matrix.full = matrix(0, ncol = 25, nrow = 25)
 for (ct in cts){ # Average cell types
   lhons.ct = subset(lhn.axons.marked.2,cell.type==ct)
   overlap.matrix.ct = matrix(0,ncol=clust.no,nrow=clust.no)
@@ -278,14 +258,15 @@ for (ct in cts){ # Average cell types
     overlap.matrix.neuron = matrix1 * matrix2
     overlap.matrix.ct = overlap.matrix.ct + overlap.matrix.neuron
   }
-  overlap.matrix = overlap.matrix + (overlap.matrix.ct/length(lhons.ct))
+  overlap.matrix.full = overlap.matrix.full + (overlap.matrix.ct/length(lhons.ct))
 }
-colnames(overlap.matrix) = paste0(1:ncol(overlap.matrix),"o")# Columns are letters for the output regions
-rownames(overlap.matrix) = paste0(1:nrow(overlap.matrix),"i")# Columns are letters for the LH regions
+colnames(overlap.matrix.full) = paste0(1:ncol(overlap.matrix.full),"o")# Columns are letters for the output regions
+rownames(overlap.matrix.full) = paste0(1:nrow(overlap.matrix.full),"i")# Columns are letters for the LH regions
 grp.overlap.input = cutree(pns.rowclus, k = 7, order_clusters_as_data = FALSE)
+overlap.matrix = overlap.matrix.full
 rownames(overlap.matrix) = paste0(grp.overlap.input[rownames(overlap.matrix)],"i")
 overlap.matrix = apply(overlap.matrix, 2, function(x) tapply(x, rownames(overlap.matrix), sum))
-overlap.matrix.norm = apply(overlap.matrix,2,function(x)x/max(x)) # Normalise axonic output
+overlap.matrix.norm = t(apply(overlap.matrix,1,function(x)x/max(x))) # Normalise axonic output
 overlap.matrix.norm[is.na(overlap.matrix.norm)] = 0
 colclus = color_clusters(hclust(dist(t(overlap.matrix),method = "euclidean"), method = "ward.D2" ),k=8)
 colclus = dendextend::set(as.dendrogram(colclus),"branches_lwd",3)
@@ -299,38 +280,64 @@ valences[grepl("VP",names(valences))] = "Humidity"
 col.valences = c()
 for(v in valences){
   if(grepl("Aversive",v)){
-    i = "darkred"
+    i = lacroix["darkred"]
   }else if(grepl("Food|Attractive",v)){
-    i = "darkgreen"
+    i = lacroix["darkgreen"]
   }else if(grepl("Egg",v)){
-    i = "darkorange"
+    i = lacroix["darkorange"]
   }else if(grepl("Humidity",v)){
-    i = "blue"
+    i = lacroix["navy"]
   }else if(grepl("Phero",v)){
-    i = "purple"
+    i = lacroix["purple"]
   }else{
     i = "darkgrey"
   }
   col.valences = c(col.valences,i)
 }
-colnames(inputs.termini.overlap.matrix) = colnames(mod.inputs.termini.overlap.matrix.norm) = c("Gust", "iPN", "Mech", "mPN", 
-                                                                                        "Mod", "Olf+Gust", "Thermo", "uPN")
-mod.cols = c("green","cyan","blue","orange","magenta","brown","red","yellow")
-
+names(col.valences) = valences
+mod.cols = c(lacroix["green"],lacroix["cyan"],lacroix["blue"], lacroix["pink"],lacroix["orange"],lacroix["purple"],lacroix["brown"],lacroix["red"],lacroix["yellow"])
+names(mod.cols) = c("Gustatory", "Inhibitory.Olfactory", "Mechanosensation", "Memory", 
+                    "Multiglomerular.Olfactory", "Neuromodulatory", "Olfactory+Gustatory", 
+                    "Thermosensory", "Uniglomerular.Olfactory")
+all.cols = c(col.valences, mod.cols)
 
 # Plot a final heatmap!
+heatmap.col = circlize::colorRamp2(c(0, 1), c("white", "grey70"))
+pdf("images/LH_supervoxel_analysis.pdf",  width = 30, height = 12)
 Heatmap(mod.inputs.termini.overlap.matrix.norm, name = "",
         cluster_rows = pns.rowclus, cluster_columns = inputs.termini.colclus, 
-        column_title ="",row_title ="",
-        row_names_gp = gpar(fontsize = 0, fontface = "plain",col = "chartreuse2"),column_names_gp = gpar(fontsize = 20, fontface = "plain",col=mod.cols))+
+        column_title ="",row_title ="", col = heatmap.col,
+        row_names_gp = gpar(fontsize = 0, fontface = "plain",col = lacroix["green"]),column_names_gp = gpar(fontsize = 15, fontface = "plain",col=mod.cols))+
   Heatmap(pns.overlap.matrix.norm, name = "",
           cluster_rows = pns.rowclus, cluster_columns = pns.colclus, 
-          column_title ="",row_title ="",
-          row_names_gp = gpar(fontsize = 0, fontface = "plain",col = "chartreuse2"),column_names_gp = gpar(fontsize = 20, fontface = "plain",col=col.valences)) +
+          column_title ="",row_title ="", col = heatmap.col,
+          row_names_gp = gpar(fontsize = 0, fontface = "plain",col = lacroix["green"]),column_names_gp = gpar(fontsize = 15, fontface = "plain",col=col.valences)) +
   Heatmap(bigs.overlap.matrix.norm, name = "",
           cluster_rows = pns.rowclus, cluster_columns = bigs.colclus, 
-          column_title ="",row_title ="",
-          row_names_gp = gpar(fontsize = 20, fontface = "plain",col = "chartreuse2"),column_names_gp = gpar(fontsize = 20, fontface = "plain",col=bigs.cols))
+          column_title ="",row_title ="", col = heatmap.col,
+          row_names_gp = gpar(fontsize = 20, fontface = "plain",col = lacroix["green"]),column_names_gp = gpar(fontsize = 15, fontface = "plain",col=bigs.cols))
+dev.off()
+
+# Plot Heatmaps
+pdf("images/LH_input_output_analysis.pdf",  width = 5, height = 7)
+Heatmap(t(overlap.matrix.norm), name = "", col = heatmap.col,
+        cluster_rows = colclus, cluster_columns  = FALSE,
+        column_title ="",row_title ="", 
+        row_names_gp = gpar(fontsize = 15, fontface = "plain",col = lacroix["green"]),
+        column_names_gp = gpar(fontsize = 15, fontface = "plain",col=lacroix["pink"]))
+dev.off()
+
+## Give a rough-type assignment to each voxel.
+### On the non-normalised data
+voxel.input.categories = voxel.valence = apply(mod.inputs.termini.overlap.matrix, 1, function(x) colnames(mod.inputs.termini.overlap.matrix)[which.max(x)])
+voxel.pn = apply(pns.overlap.matrix.norm, 1, function(x) colnames(pns.overlap.matrix)[which.max(x)])
+voxel.pn.categories = valences[voxel.pn]
+names(voxel.pn.categories) = names(voxel.pn)
+voxel.pn.categories[is.na(voxel.pn.categories)] = "Uniglomerular.Olfactory"
+voxel.valence[grepl("\\.Olfactory",voxel.valence)] = voxel.pn.categories[grepl("\\.Olfactory",voxel.valence)]
+voxel.output.correspondences = apply(overlap.matrix.full, 2, function(x) rownames(overlap.matrix.full)[which.max(x)])
+voxel.output.valence = voxel.valence[voxel.output.correspondences]
+names(voxel.output.valence) = names(voxel.output.correspondences)
 
 ##############################
 ### Visualise Syper Voxels ###
@@ -363,7 +370,7 @@ text.location = boundingbox(lhr)[1,]+c(80,0,0)
 for(c in 1:length(ims1)){
   plot3d(lhr, col = "grey", alpha = 0.1, add = TRUE)
   fhat = attr(ims1[[c]], "fhat")
-  col = "green"
+  col = lacroix["green"]
   plot(fhat,cont=c(50,95),colors=c(col,col),drawpoints=F
        ,xlab="", ylab="", zlab="",size=2, ptcol="white", add=TRUE, box=FALSE, axes=FALSE)
   text3d(text.location,texts = paste0(c,"i"),col=col,font=2, cex = 1)
@@ -380,7 +387,7 @@ open3d(userMatrix = structure(c(0.954851269721985, 0.040564451366663,
 for(c in 1:length(ims1)){
   plot3d(lhr, col = "grey", alpha = 0.1, add = TRUE)
   fhat = attr(ims1[[c]], "fhat")
-  col = "green"
+  col = lacroix["green"]
   plot(fhat,cont=c(50,95),colors=c(col,col),drawpoints=F
        ,xlab="", ylab="", zlab="",size=2, ptcol="white", add=TRUE, box=FALSE, axes=FALSE)
   rgl.snapshot(paste0("images/supervoxels_dorsalview_","input_",c,".png"),fmt="png")
@@ -419,19 +426,48 @@ text.location = boundingbox(FCWB)[1,]+c(100,0,0)
 for(c in 1:length(ims2)){
   plot3d(FCWB, col = "grey", alpha = 0.1, add = TRUE)
   fhat = attr(ims2[[c]], "fhat")
-  col = "magenta"
+  col = lacroix["pink"]
   plot(fhat,cont=c(50,95),colors=c(col,col),drawpoints=F
        ,xlab="", ylab="", zlab="",size=2, ptcol="white", add=TRUE, box=FALSE, axes=FALSE)
   rgl.snapshot(paste0("/images/supervoxels_","output_",c,".png"),fmt="png")
   clear3d()
 }
 
+## We can now make a little atlas of the lateral horn input areas.
+open3d(userMatrix = structure(c(0.955159366130829, -0.285889625549316, 
+                                -0.0770552754402161, 0, -0.296017527580261, -0.927844762802124, 
+                                -0.226886421442032, 0, -0.00663087517023087, 0.23952242732048, 
+                                -0.970868229866028, 0, -0.810615502960502, -1.20646136620167, 
+                                -7.49578407532869e-06, 1), .Dim = c(4L, 4L)), zoom = 0.676839649677277, 
+       windowRect = c(1460L, 65L, 2585L, 1058L))
+for(n in unique(voxel.valence)){
+  clusters = as.numeric(gsub("i","",names(voxel.valence)[voxel.valence==n]))
+  plot3d(lhr, col = "grey", alpha = 0.1, add = TRUE)
+  for(c in clusters){
+    fhat = attr(ims1[[c]], "fhat")
+    col = all.cols[n]
+    plot(fhat,cont=c(50,95),colors=c(col,col),drawpoints=F
+         ,xlab="", ylab="", zlab="",size=2, ptcol="white", add=TRUE, box=FALSE, axes=FALSE)
+  }
+}
+rgl.snapshot(paste0("images/valence_supervoxelcluster_input.png"),fmt="png")
 
-
-
-
-
-
-
-
+# And again for the output zones
+open3d(userMatrix = structure(c(0.998224198818207, 0.0104750925675035, 
+                                -0.0586415156722069, 0, 0.00851582363247871, -0.999400317668915, 
+                                -0.0335615389049053, 0, -0.0589578822255135, 0.0330026298761368, 
+                                -0.997714698314667, 0, 2.96389417437521, -12.2722030161793, 2.34399720966394e-06, 
+                                1), .Dim = c(4L, 4L)), zoom = 0.436296999454498, windowRect = c(1526L, 
+                                                                                                44L, 2811L, 1058L))
+for(n in unique(voxel.output.valence)){
+  clusters = as.numeric(gsub("o","",names(voxel.output.valence)[voxel.output.valence==n]))
+  plot3d(FCWB, col = "grey", alpha = 0.1, add = TRUE)
+  for(c in clusters){
+    fhat = attr(ims2[[c]], "fhat")
+    col = all.cols[n]
+    plot(fhat,cont=c(50,95),colors=c(col,col),drawpoints=F
+         ,xlab="", ylab="", zlab="",size=2, ptcol="white", add=TRUE, box=FALSE, axes=FALSE)
+  }
+}
+rgl.snapshot(paste0("images/valence_supervoxelcluster_output.png"),fmt="png")
 
