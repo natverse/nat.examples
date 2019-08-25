@@ -1,6 +1,6 @@
 nat.examples
 ============
-<img align="right" width="300px" src="https://raw.githubusercontent.com/natverse/nat.examples/images/hex-natverse_logo.png">
+<img align="right" width="300px" src="https://natverse.github.io/images/hex-natverse_logo.png">
 
 Sample code for the NeuroAnatomy Toolbox ([nat](https://github.com/natverse/nat)) R package
 
