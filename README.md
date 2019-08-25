@@ -1,8 +1,8 @@
 nat.examples
 ============
-<img align="right" width="300px" src="https://raw.githubusercontent.com/jefferis/nat.examples/images/hex-natverse_logo.png">
+<img align="right" width="300px" src="https://raw.githubusercontent.com/natverse/nat.examples/images/hex-natverse_logo.png">
 
-Sample code for the NeuroAnatomy Toolbox ([nat](https://github.com/jefferis/nat)) R package
+Sample code for the NeuroAnatomy Toolbox ([nat](https://github.com/natverse/nat)) R package
 
 ## Contents
 01. Library installation and basic example
@@ -46,5 +46,5 @@ code interactively (e.g. with copy paste or RStudio's "Run selection* menu optio
 ## Acknowledgements
 We insist that you cite the original authors of each study if you make use of
 the data that they have released. Please also cite this repository 
-(https://github.com/jefferis/nat.examples) if you make use of specific example
-code along with the https://github.com/jefferis/nat package.
+(https://github.com/natverse/nat.examples) if you make use of specific example
+code along with the https://github.com/natverse/nat package.
