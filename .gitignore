@@ -4,6 +4,10 @@
 .Rapp.history
 *~
 *.zip
+*.png
+*.RData
+*.pdf
 *.mat
+*.Rhistory
 06-lee2012/flycircuit.boundingbox.txt
 .Rproj.user
