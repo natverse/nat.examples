@@ -35,7 +35,7 @@ rgl.snapshot(filename = "images/basic_nat/LM_DA1_PN.png", fmt = "png")
 ## Connect to the public FAFB instance (Zheng et al. 2018) hosted publicly by Virtual Fly Brain
 adult.conn = catmaid_login(server="https://catmaid-fafb.virtualflybrain.org/")
 ## Get the neuron in question
-da1.em = fetchn_fafb("annotation:glomerulus DA1 right", mirror = FALSE, reference = FCWB)[1:5] # Bridge to the same space as our light-level neuron!!
+da1.em = fetchn_fafb("name:PN glomerulus DA1", mirror = FALSE, reference = FCWB)[1:5] # Bridge to the same space as our light-level neuron!!
 n.em = da1.em[[1]]
 n.em = unspike(n.em, threshold = 100) # correct data abberation fromn mis-registrations
 
