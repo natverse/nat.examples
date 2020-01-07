@@ -304,7 +304,7 @@ for(i in names(insect.brains)){
       grepl("^ME_", ib$RegionList)
     }else{
       grepl("^Medulla",ib$neuropil_full_names)
-    }]), col = "blue"),
+    }]), col = "cyan"),
     error = function(e) NULL)
     plot3d(ib, col = "lightgrey", alpha = 0.1)
     rgl.snapshot(file = paste0("images/insectbrainsOL/OL_",paste(unlist(strsplit(ib$common_name," ")),collapse="_"), "_",ib$sex, ".png"), fmt = "png")
@@ -321,7 +321,7 @@ for(i in names(insect.brains)){
       grepl("^MB_M|^MB_P|MB_V", ib$RegionList)
     }else{
       ib$neuropil_full_names%in%mblobes
-    }]), col = "magenta")
+    }]), col = "deeppink")
     plot3d(ib, col = "lightgrey", alpha = 0.1)
     rgl.snapshot(file = paste0("images/insectbrainsMB/MB_",paste(unlist(strsplit(ib$common_name," ")),collapse="_"), "_",ib$sex, ".png"), fmt = "png")
     clear3d()
@@ -346,7 +346,7 @@ ggdotchart(m, x = "species", y = "volume",
   scale_color_manual(values = c(al.norm.volume = "red",
                                 optic.norm.volume = "cyan",
                                 calyx.norm.volume = "purple",
-                                mblobes.norm.volume = "magenta"))+
+                                mblobes.norm.volume = "deeppink"))+
   theme(legend.position = "none") + xlab("") + ylab("")
 dev.off()
 pdf("images/insectbraindb_normalised_neuropils_vs_total_volume.pdf", width = 10, height = 7)
