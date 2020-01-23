@@ -9,6 +9,7 @@ if(!require('Rtsne')) install.packages("Rtsne")
 # load natversee functions
 library(natverse)
 library(ggplot2)
+library(ggpubr)
 library(Rtsne)
 
 # set working directory to location of this file
