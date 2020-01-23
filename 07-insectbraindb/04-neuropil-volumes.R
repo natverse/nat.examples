@@ -87,13 +87,13 @@ if(!require('alphashape3d')) install.packages("alphashape3d")
 if(!require('pbapply')) install.packages("pbapply")
 
 ## Create function to calculate volume
-calculate_volume <- function(brain, neuropil = NULL, alpha = 10, scale = 1e-9, method = c("convhull","ashape"), resample = 0.1, ...){
+calculate_volume <- function(brain, neuropil = NULL, alpha = 10, scale = 1e-9, method = c("ashape","convhull"), resample = 1, ...){
   method = match.arg(method)
   if(is.null(neuropil)){
     brain = subset(brain, neuropil)
   }
   if(resample){
-    brain = vcgUniformRemesh(as.mesh3d(brain), voxelSize = resample, offset = 0, discretize = FALSE,
+    brain = Rvcg::vcgUniformRemesh(as.mesh3d(brain), voxelSize = resample, offset = 0, discretize = FALSE,
                              multiSample = FALSE, absDist = FALSE, mergeClost = FALSE,
                              silent = FALSE)
   }
@@ -114,10 +114,16 @@ calculate_volume <- function(brain, neuropil = NULL, alpha = 10, scale = 1e-9, m
 library(RvtkStatismo)
 
 ## Get the volumes for the whole brain
-insect.brain.volumes = pbapply::pbsapply(insect.brains.with.al, calculate_volume, neuropil = NULL)
+insect.brain.volumes = pbapply::pbsapply(insect.brains.with.al, 
+                                         calculate_volume,
+                                         resample = FALSE,
+                                         neuropil = NULL)
 
 ## Get the volumes for just the antennal lobe
-insect.al.volumes = pbapply::pbsapply(insect.brains.with.al, calculate_volume, neuropil = "^AL_left|^AL_right|^AL_noside|^AL_R$|^AL_L$")
+insect.al.volumes = pbapply::pbsapply(insect.brains.with.al, 
+                                      calculate_volume, 
+                                      resample = FALSE,
+                                      neuropil = "^AL_left|^AL_right|^AL_noside|^AL_R$|^AL_L$")
 
 ## Hmm, that took a while
 
@@ -289,8 +295,8 @@ for(i in names(insect.brains)){
     message(ib$scientific_name, " the ", ib$common_name)
     plot3d(subset(ib, "^AL_left|^AL_right|^AL_noside|^AL_R$|^AL_L$"), col = "red")
     plot3d(ib, col = "lightgrey", alpha = 0.1)
-    rgl.snapshot(file = paste0("images/insectbrainsAL/AL_",paste(unlist(strsplit(ib$common_name," ")),collapse="_"), "_",ib$sex, ".png"), fmt = "png")
-    clear3d()
+    #rgl.snapshot(file = paste0("images/insectbrainsAL/AL_",paste(unlist(strsplit(ib$common_name," ")),collapse="_"), "_",ib$sex, ".png"), fmt = "png")
+    #clear3d()
   }
   if(i %in% names(insect.brains.with.optic)){
     message(ib$scientific_name, " the ", ib$common_name)
@@ -307,8 +313,8 @@ for(i in names(insect.brains)){
     }]), col = "cyan"),
     error = function(e) NULL)
     plot3d(ib, col = "lightgrey", alpha = 0.1)
-    rgl.snapshot(file = paste0("images/insectbrainsOL/OL_",paste(unlist(strsplit(ib$common_name," ")),collapse="_"), "_",ib$sex, ".png"), fmt = "png")
-    clear3d()
+    #rgl.snapshot(file = paste0("images/insectbrainsOL/OL_",paste(unlist(strsplit(ib$common_name," ")),collapse="_"), "_",ib$sex, ".png"), fmt = "png")
+    #clear3d()
   }
   if(i %in% names(insect.brains.with.mb)){
     message(ib$scientific_name, " the ", ib$common_name)
@@ -323,11 +329,11 @@ for(i in names(insect.brains)){
       ib$neuropil_full_names%in%mblobes
     }]), col = "deeppink")
     plot3d(ib, col = "lightgrey", alpha = 0.1)
-    rgl.snapshot(file = paste0("images/insectbrainsMB/MB_",paste(unlist(strsplit(ib$common_name," ")),collapse="_"), "_",ib$sex, ".png"), fmt = "png")
-    clear3d()
+    #rgl.snapshot(file = paste0("images/insectbrainsMB/MB_",paste(unlist(strsplit(ib$common_name," ")),collapse="_"), "_",ib$sex, ".png"), fmt = "png")
+    #clear3d()
   }
   plot3d(bbxm, alpha = 0, add = TRUE)
-  #rgl.snapshot(file = paste0("images/insectbrainsNP/NP_",paste(unlist(strsplit(ib$common_name," ")),collapse="_"), "_",ib$sex, ".png"), fmt = "png")
+  rgl.snapshot(file = paste0("images/insectbrainsNP/NP_",paste(unlist(strsplit(ib$common_name," ")),collapse="_"), "_",ib$sex, ".png"), fmt = "png")
   #progress = readline(prompt = "Press any key for next brain ... ")
 }
 
