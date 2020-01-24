@@ -37,7 +37,7 @@ ap3.mbon.connected = neuprint_connection_table(ap3.mbon.info$bodyid, prepost = "
 table(ap3.mbon.connected$roi)
 
 ## Let's have a look at what the strongest downstream partners look like
-ap3.mbon.connected.strong = subset(ap3.mbon.connected,weight>30)
+ap3.mbon.connected.strong = subset(ap3.mbon.connected,weight>30, prepost = "POST")
 ap3.targets = neuprint_read_neurons(ap3.mbon.connected.strong$partner)
 ap3.targets = unspike(ap3.targets, threshold=1000)
 nopen3d(userMatrix = structure(c(0.964227318763733, -0.0444099828600883, 
@@ -50,8 +50,10 @@ rgl.snapshot(filename = "images/hemibrain_ap3_strong_downstream_partners.png", f
 View(ap3.targets[,])
 
 ## Can other MBONs influence these strong partners?
+### The cognate DAN for MBONs-a'3, PPL1-a'3, gets 49 (!) of its inputs from MBONs-a'3
+### Which other MBONs impinge on it?
 ### Via whatever path?
 
 
-
+sp = neuprint_get_shortest_paths(body_pre = mbon.info$bodyid[1], body_post = "517514142")
 
