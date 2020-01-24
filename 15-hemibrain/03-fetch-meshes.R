@@ -20,3 +20,16 @@ plot3d(mb.mesh, add = TRUE, alpha = 0.1, col = lacroix[["pink"]])
 ap3.mesh = neuprint_ROI_mesh(roi = "a'3(R)")
 plot3d(ap3.mesh, add = TRUE, alpha = 0.5, col = lacroix[["purple"]])
 rgl.snapshot(filename = "images/hemibrain_MB_ap3.png", fmt ="png")
+
+## Maybe get the whole hemibrai mesh?
+## hemibrain = neuprint_ROI_mesh(roi = "hemibrain")
+
+# And with some neurons!
+nopen3d(userMatrix = structure(c(0.98370349407196, -0.104569993913174, 
+                                 -0.146263062953949, 0, 0.147007316350937, -0.000597098842263222, 
+                                 0.989135324954987, 0, -0.103521309792995, -0.994517505168915, 
+                                 0.0147849693894386, 0, 0, 0, 0, 1), .Dim = c(4L, 4L)), zoom = 0.644609212875366, 
+        windowRect = c(20L, 65L, 1191L, 843L))
+plot3d(mb.mesh, add = TRUE, alpha = 0.1, col = "grey")
+plot3d(mbons, col = sample(lacroix,length(mbons), replace = TRUE), lwd = 2)
+rgl.snapshot(filename = "images/hemibrain_mbons_mb.png", fmt ="png")
