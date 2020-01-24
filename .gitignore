@@ -12,6 +12,7 @@
 *.Rproj.user
 *.Rhistory
 *.RData
+*.rda
 *.pdf
 .Rproj.user
 
