@@ -2,7 +2,8 @@
 if(!require('devtools')) install.packages("devtools")
 if(!require('natverse')) devtools::install_github("natverse/natverse")
 if(!require('ComplexHeatmap')) install.packages("ComplexHeatmap")
-if(!require('devtools')) install.packages("ggnetwork")
+if(!require('ggnetwork')) install.packages("ggnetwork")
+if(!require('network')) install.packages("network")
 
 # load
 library(natverse)

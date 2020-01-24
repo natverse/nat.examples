@@ -1,6 +1,6 @@
 # Central brain drosophila neurons from the FlyEM HemiBrain project
 
-The largest draft connectome to date was released on the 22nd of January, 2020. The [FlyEM Janelia HemiBrain project](https://www.janelia.org/project-team/flyem/hemibrain) has released 21,662, many more fragments, and almost 10 million synapses. About 35% of its uatomatically predicted synapses have been matched up to a semi-automatically traced 'body' deemed large enough to constitute and identifiable neuron. This data can be accessed using our R package [neuprintr](https://github.com/natverse/neuprintr/) to query a publically accessible [neuPrint explorer instance](https://neuprint.janelia.org/).
+The largest draft connectome to date was released on the 22nd of January, 2020. The [FlyEM Janelia HemiBrain project](https://www.janelia.org/project-team/flyem/hemibrain) has released 21,662 neurons, many more fragments, and almost 10 million synapses. About 35% of its automatically predicted synapses have been matched up to a semi-automatically traced 'body' deemed large enough to constitute an identifiable neuron. This data can be accessed using our R package [neuprintr](https://github.com/natverse/neuprintr/) to query a publically accessible [neuPrint explorer instance](https://neuprint.janelia.org/).
 
 For installation and authentication instructions specific to neuprintr, look at the README.md for the package [here](https://github.com/natverse/neuprintr/).
 
