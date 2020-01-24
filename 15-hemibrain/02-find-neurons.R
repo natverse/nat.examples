@@ -36,7 +36,8 @@ rgl.snapshot(filename = "images/hemibrain_an_mbon.png", fmt ="png")
 ## Now that we have all of the bodyIds, we can read these neurons from neuPrint:
 mbons = neuprint_read_neurons(mbon.info$bodyid)
 clear3d()
-plot3d(mbons, col = sample(lacroix,length(mbons)), lwd = 2)
+plot3d(mbons, col = sample(lacroix,length(mbons), replace = TRUE), lwd = 2)
+rgl.snapshot(filename = "images/hemibrain_mbons.png", fmt ="png")
 ### Why is this function so slow?
 ### Because it fetches fragmented neuron skeletons assigned to the same neuron
 ### Stitched them into one neuron, grabs all the neuron's synapses
