@@ -16,7 +16,7 @@ comps = sapply(name.split, function(x) tryCatch(gsub("\\)|_|bi.*|R.*|L.*|\\?.*|P
 mbon.info$compartment = comps
 mbon.info = subset(mbon.info, compartment!="")
 #### so there seem to be
-print(length(comps))
+print(nrow(mbon.info))
 #### MBONs and
 #### And
 print(length(unique(comps)))
