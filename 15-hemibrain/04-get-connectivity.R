@@ -7,8 +7,10 @@ rownames(mbon.adj) = colnames(mbon.adj) = mbon.info$type
 
 ## Let's visualise this connectivity
 my_palette <- colorRampPalette(c(lacroix[["cyan"]],lacroix[["yellow"]], lacroix[["orange"]], lacroix[["cerise"]])) (n=20)
+pdf(file = "images/MBON_interconnectivity.pdf", height = 10, width = 10)
 Heatmap(mbon.adj,
         col = my_palette)
+dev.off()
 
 ## It is hard to parse this information mentally
 ### What if we just see what the compartment to compartment connectivity is?
@@ -16,8 +18,10 @@ mbon.adj.comp = mbon.adj
 rownames(mbon.adj.comp) = colnames(mbon.adj.comp) = mbon.info$compartment
 mbon.adj.comp = t(apply(t(mbon.adj.comp), 2, function(x) tapply(x, colnames(mbon.adj.comp), mean, na.rm = TRUE)))
 mbon.adj.comp = apply(mbon.adj.comp, 2, function(x) tapply(x, rownames(mbon.adj.comp), mean, na.rm = TRUE))
+pdf(file = "images/MBON_compartment_interconnectivity.pdf", height = 10, width = 10)
 Heatmap(mbon.adj.comp,
         col = my_palette)
+dev.off()
 
 ## What about MBON connectivity to neurons not in this set of MBONs?
 ### First, is there a common partner to all MBONs?
@@ -53,7 +57,59 @@ View(ap3.targets[,])
 ### The cognate DAN for MBONs-a'3, PPL1-a'3, gets 49 (!) of its inputs from MBONs-a'3
 ### Which other MBONs impinge on it?
 ### Via whatever path?
+shortest.paths = data.frame()
+for(b in mbon.info$bodyid){
+  sp = neuprint_get_shortest_paths(body_pre = b, body_post = "517514142")
+  dupe = ifelse( is.na(which(duplicated(sp$to))[1]),nrow(sp),which(duplicated(sp$to))[1])
+  shortest = sp[1:dupe,]
+  if(nrow(shortest)>1 & nrow(shortest)<5 ){
+    shortest$order.to = paste(1:nrow(shortest), nrow(shortest), sep = "/")
+    shortest$order.from = paste(1:nrow(shortest)-1, nrow(shortest), sep = "/")
+    shortest[1,"order.from"] = mbon.info[as.character(b),"compartment"]
+    shortest[nrow(shortest),"order.to"] = ap3.targets["517514142","type"]
+    shortest.paths = rbind(shortest.paths, shortest) 
+  }
+}
 
+# Make network
+set.seed(42)
+paths = aggregate(list(weight = shortest.paths$weight), list(order.from = shortest.paths$order.from,
+                                                             order.to = shortest.paths$order.to),
+                           sum)
+n = network(paths,
+            matrix.type = "edgelist",
+            ignore.eval = FALSE,
+            layout = "fruchtermanreingold",
+            names.eval = "weight",
+            directed = TRUE)
+n %v% "width" <- ifelse(is.na(ggnetwork(n)$weight),0,ggnetwork(n)$weight)
+n = ggnetwork(n, cell.jitter = 0.75, arrow.gap = 0.01)
 
-sp = neuprint_get_shortest_paths(body_pre = mbon.info$bodyid[1], body_post = "517514142")
+# Set colours
+orders = unique(c(paths$order.to,paths$order.from))
+order.cols = rep("grey30",length(orders))
+names(order.cols) = orders
+comps = unique(mbon.info$compartment)
+mbon.cols = rep(lacroix[["pink"]],length(comps))
+names(mbon.cols) = comps
+mbon.cols = c(mbon.cols,
+              order.cols[!names(order.cols)%in%c("PPL104",names(mbon.cols))],
+              "PPL104" = lacroix[["orange"]])
 
+# Plot
+set.seed(1)
+pdf(file = "images/PPL1ap3_MBON_input_graph.pdf", height = 5, width = 5)
+ggplot(n, aes(x = x, y = y, xend = xend, yend = yend)) +
+  geom_edges(aes(color = vertex.names),
+             curvature = 0.05,
+             arrow = arrow(length = unit(6, "pt"), 
+                           type = "closed")) +
+  geom_nodes(aes(color = vertex.names, size = 6)) +
+  geom_edgetext(aes(label = weight, color = vertex.names), fill = NA) +
+  geom_nodelabel_repel(aes(color = vertex.names, label = vertex.names),
+                       fontface = "bold", box.padding = unit(1, "lines")) +
+  scale_color_manual(values = mbon.cols) +
+  scale_fill_manual(values = mbon.cols) +
+  theme_blank() +  
+  guides(color = FALSE, shape = FALSE, fill = FALSE, size = FALSE, linetype = FALSE) + ylab("") + xlab("")
+dev.off()
