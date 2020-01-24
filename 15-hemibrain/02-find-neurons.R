@@ -9,6 +9,7 @@
 ### Let's find some in our HemiBrain data:
 mbon.info = neuprint_search(".*MBON.*")
 mbon.info[!is.na(mbon.info$type),"type"] = mbon.info[!is.na(mbon.info$type),"name"]
+rownames(mbon.info) = mbon.info$bodyid
 #### Add MB compartment information from the name
 name.split = strsplit(mbon.info$name,split="\\(")
 comps = sapply(name.split, function(x) tryCatch(gsub("\\)|_|bi.*|R.*|L.*|\\?.*|P.*","",x[[2]]), error = function(e) ""))
@@ -30,11 +31,11 @@ View(mbon.info)
 ## Let's quickly read one neuron, and have a look at it!
 mbon = neuprint_read_neuron(mbon.info$bodyid[1])
 ### visualise:
-nopen3d(userMatrix = structure(c(0.947127282619476, 0.222770735621452, 
-                                 -0.230919197201729, 0, 0.247805655002594, -0.0506941750645638, 
-                                 0.967482566833496, 0, 0.203820571303368, -0.973551869392395, 
-                                 -0.103217624127865, 0, 0, 0, 0, 1), .Dim = c(4L, 4L)), zoom = 0.58467960357666, 
-        windowRect = c(1460L, 65L, 2877L, 996L)) # set view
+nopen3d(userMatrix = structure(c(0.591208934783936, 0.804114699363708, 
+                                  0.0622238591313362, 0, -0.0341671295464039, -0.0521107465028763, 
+                                  0.998056709766388, 0, 0.805794537067413, -0.592186093330383, 
+                                  -0.00333413854241371, 0, 0, 0, 0, 1), .Dim = c(4L, 4L)), zoom = 0.710681617259979, 
+         windowRect = c(20L, 65L, 1191L, 843L)) # set view
 plot3d(mbon, WithConnectors = TRUE, col = lacroix[["brown"]], lwd = 2)
 rgl.snapshot(filename = "images/hemibrain_an_mbon.png", fmt ="png")
 ### output synapses in red, input ones in blue
@@ -42,7 +43,11 @@ rgl.snapshot(filename = "images/hemibrain_an_mbon.png", fmt ="png")
 
 ## Now that we have all of the bodyIds, we can read these neurons from neuPrint:
 mbons = neuprint_read_neurons(mbon.info$bodyid)
-clear3d()
+nopen3d(userMatrix = structure(c(0.98370349407196, -0.104569993913174, 
+                                 -0.146263062953949, 0, 0.147007316350937, -0.000597098842263222, 
+                                 0.989135324954987, 0, -0.103521309792995, -0.994517505168915, 
+                                 0.0147849693894386, 0, 0, 0, 0, 1), .Dim = c(4L, 4L)), zoom = 0.644609212875366, 
+        windowRect = c(20L, 65L, 1191L, 843L))
 plot3d(mbons, col = sample(lacroix,length(mbons), replace = TRUE), lwd = 2)
 rgl.snapshot(filename = "images/hemibrain_mbons.png", fmt ="png")
 ### Why is this function so slow?
