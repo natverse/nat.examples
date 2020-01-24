@@ -14,6 +14,13 @@ name.split = strsplit(mbon.info$name,split="\\(")
 comps = sapply(name.split, function(x) tryCatch(gsub("\\)|_|bi.*|R.*|L.*|\\?.*|P.*","",x[[2]]), error = function(e) ""))
 mbon.info$compartment = comps
 mbon.info = subset(mbon.info, compartment!="")
+#### so there seem to be
+print(length(comps))
+#### MBONs and
+#### And
+print(length(unique(comps)))
+#### MBONs with unique compartment innervations
+#### In the literature, there are 
 
 ## Let's see what meta-info we get, along with stuff with 'MBON' in the name
 View(mbon.info)
