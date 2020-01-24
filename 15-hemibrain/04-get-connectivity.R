@@ -62,7 +62,7 @@ for(b in mbon.info$bodyid){
   sp = neuprint_get_shortest_paths(body_pre = b, body_post = "517514142")
   dupe = ifelse( is.na(which(duplicated(sp$to))[1]),nrow(sp),which(duplicated(sp$to))[1])
   shortest = sp[1:dupe,]
-  if(nrow(shortest)>1 & nrow(shortest)<5 ){
+  if(nrow(shortest)>0 & ncol(shortest) > 0 & nrow(shortest)<5 ){
     shortest$order.to = paste(1:nrow(shortest), nrow(shortest), sep = "/")
     shortest$order.from = paste(1:nrow(shortest)-1, nrow(shortest), sep = "/")
     shortest[1,"order.from"] = mbon.info[as.character(b),"compartment"]
@@ -82,7 +82,6 @@ n = network(paths,
             layout = "fruchtermanreingold",
             names.eval = "weight",
             directed = TRUE)
-n %v% "width" <- ifelse(is.na(ggnetwork(n)$weight),0,ggnetwork(n)$weight)
 n = ggnetwork(n, cell.jitter = 0.75, arrow.gap = 0.01)
 
 # Set colours
