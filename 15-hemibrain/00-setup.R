@@ -2,12 +2,14 @@
 if(!require('devtools')) install.packages("devtools")
 if(!require('natverse')) devtools::install_github("natverse/natverse")
 if(!require('ComplexHeatmap')) install.packages("ComplexHeatmap")
+if(!require('devtools')) install.packages("ggnetwork")
 
 # load
 library(natverse)
 library(neuprintr)
 library(dendroextras)
 library(ComplexHeatmap)
+library(ggnetwork)
 
 # set working directory to location of this file
 try(setwd(dirname(attr(body(function() {}),'srcfile')$filename)))
