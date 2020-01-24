@@ -74,5 +74,5 @@ ap3.info = ap3.info[!grepl("KC",ap3.info$bodyname),]
 print(nrow(ap3.info))
 
 ## Getting all that data took a while, so let's save it for later
-save(mbons,"hemibrain_mbons.rda")
+save(mbons,file = "hemibrain_mbons.rda")
 
