@@ -1,3 +1,5 @@
+## This script assumed that you have run the file "03-helmstaedter2013/00-setup.R"
+
 # There is presently a problem reading the main Matlab skeleton dataset into R
 # because it is uses advanced MAT format features that are not supported by
 # the R.matlab package. Therefore I have provided a canned download for the time
