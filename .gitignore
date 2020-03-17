@@ -15,4 +15,5 @@
 *.rda
 *.pdf
 .Rproj.user
+.rda
 

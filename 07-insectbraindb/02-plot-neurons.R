@@ -1,30 +1,39 @@
-library(nat)
-# load in cached version of processed neurons from disk
-load("tedore_neurons.rda")
+## This script assumed that you have run the file "07-insectbraindb/00-setup.R"
 
-# what kind of neurons do we have?
-head(tedoren)
+## First, we call the read neurons function, with ids set to NULL
+insect.neurons = insectbraindb_read_neurons(ids = NULL)
 
-# the with.neuronlist method gives you convenient access to the attached metadata frame
-# here we summarise the "Species" for each neuron
-with(tedoren, summary(Species))
+## So, it seem the Monarch Butterfly is the clear winner there, 
+## maybe let's just have those
+butterfly.neurons = subset(insect.neurons, common_name == "Monarch Butterfly")
 
-# plot neurons from specific structural cluster
-nopen3d()
-plot3d(subset(tedoren, Species=="Danaus plexippus"), lwd=2, soma=5)
+## And let's plot them
+nat::nopen3d(userMatrix = structure(c(0.998683869838715, -0.00999264605343342, 
+                                      -0.050302866846323, 0, -0.0184538997709751, -0.985155284404755, 
+                                      -0.170669943094254, 0, -0.0478506684303284, 0.171373650431633, 
+                                      -0.984043300151825, 0, 0, 0, 0, 1), .Dim = c(4L, 4L)), zoom = 0.600000023841858, 
+             windowRect = c(1440L, 45L, 3209L, 1063L))
+plot3d(butterfly.neurons, lwd = 2, soma = 5)
 
-## add surface object for monarch central complex
+## Cool! But maybe we also want to see it's template brain? 
+## Let's check if they have it
+available.brains = insectbraindb_species_info()
+available.brains
 
-# newest versions of rgl package can read wavefront obj files.
-if(exists("readOBJ", 'package:rgl')){
-  if(!file.exists('monarch_brain_optimized_hh1SWlD.obj'))
-    download.file("http://www.tedore.net/media/brain-models/5/monarch_brain_optimized_hh1SWlD.obj", 
-                  destfile = 'monarch_brain_optimized_hh1SWlD.obj', mode='wb')
-  monarch_cc.surf=rgl::readOBJ("monarch_brain_optimized_hh1SWlD.obj")
-} else {
-  # get a cached copy from flybrain website
-  download.file("http://flybrain.mrc-lmb.cam.ac.uk/si/nblast/nat.examples/07-insectbraindb/monarch_cc.rds",
-                "monarch_cc.rds", mode='wb')
-  monarch_cc.surf=readRDS("monarch_cc.rds")
-}
-wire3d(monarch_cc.surf, col='grey', lwd=0.5)
+## Great, they do, let's get it
+butterfly.brain = insectbraindb_read_brain(species = "Danaus plexippus")
+
+## And plot in a translucent manner
+plot3d(butterfly.brain, alpha = 0.1)
+rgl.snapshot(file = paste0("images/MonarchButterly_ReppertLab_.png"), fmt = "png")
+
+## Oop, that's a lot of neuropils. 
+## Let's go for only a subset. What's available?
+butterfly.brain$RegionList
+butterfly.brain$neuropil_full_names
+
+## There lateral horn (LH) and the antennal lobe (AL) are my favourites.
+## Let's plot those
+clear3d()
+plot3d(subset(butterfly.brain, "LH|AL"), alpha = 0.5)
+plot3d(butterfly.neurons, lwd = 2, soma = 5)
