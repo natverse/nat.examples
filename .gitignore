@@ -4,6 +4,9 @@
 .Rapp.history
 *~
 *.zip
+*.png
+*.RData
+*.pdf
 *.mat
 *.rds
 *.png

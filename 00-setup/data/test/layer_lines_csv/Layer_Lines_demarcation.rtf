@@ -1,0 +1,25 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1671\cocoasubrtf500
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 Layer lines were demarcated using a segmented line in Fiji.\
+The X,Y coordinates of the line (in pixel values) were extracted in .csv format. \
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 \'97>ATTENTION: (if it will actually make any impact, theoretically it should) my pixel counter 0,0 coordinates are at the top left corner (Y=0 is at the top, X=0 is at the left), while for the microns it starts (0,0) at the bottom, left corner\'85 I know this might be confusing and presumably it might fuck up the scaling to microns for Y coordinates?\
+\
+The image used (a 2D max projection of the original image stack in which the bouton/axon marking/tracing was done) has the following dimensions\
+ (X,Y)(microns, pixels): (2353.39x1968.56,5669x4742)\
+2.4089 pixels/micron\
+\
+So if you can project these lines\'92 coordinates to all z dimensions, I suppose they can be used to segment the axon traces and bouton locations to layers.\
+\
+The original stack (where the tracing/marking was done) has 121 z-stacks and voxel depth: 1.524980 um, and pixel width and height 0.4151329um.\
+\
+All these parameters of course (dimensions,z-number, etc) will vary from neuron to neuron.\
+\
+Hope this info helps - let me know how it works out.\
+}
