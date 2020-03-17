@@ -9,8 +9,3 @@ library(tidyverse)
 
 # set working directory to location of this file
 try(setwd(dirname(attr(body(function() {}),'srcfile')$filename)))
-
-# load data from previoous sessions
-if (exists(".RData")){
-    load(".RData")
-}
