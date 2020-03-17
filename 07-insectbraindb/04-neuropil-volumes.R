@@ -87,9 +87,14 @@ if(!require('alphashape3d')) install.packages("alphashape3d")
 if(!require('pbapply')) install.packages("pbapply")
 
 ## Create function to calculate volume
-calculate_volume <- function(brain, neuropil = NULL, alpha = 10, scale = 1e-9, method = c("ashape","convhull"), resample = 1, ...){
+calculate_volume <- function(brain, 
+                             neuropil = NULL, 
+                             alpha = 10, 
+                             scale = 1e-9, method = c("Rvcg","ashape","convhull"), 
+                             resample = 0, 
+                             ...){
   method = match.arg(method)
-  if(is.null(neuropil)){
+  if(!is.null(neuropil)){
     brain = subset(brain, neuropil)
   }
   if(resample){
@@ -101,17 +106,17 @@ calculate_volume <- function(brain, neuropil = NULL, alpha = 10, scale = 1e-9, m
   if(method=="ashape"){
     a = alphashape3d::ashape3d(points, alpha = alpha, pert = TRUE)
     volume_ashape3d(a)*scale # convert to mm3
+  } else if (method == "Rvcg") {
+    m = rgl::as.mesh3d(brain)*scale
+    v = tryCatch(Rvcg::vcgVolume(m), error = function(e) NULL)
+    if(is.null(v)){
+      v= Rvcg::vcgVolume(Rvcg::vcgClean(m,sel=0:6,iterate=TRUE))
+    }
+    v
   }else{
     geometry::convhulln(points, output.options = "FA")$vol*scale
   }
 }
-
-## This was of calculating volumes doesn't seem terribly accurate though, very sensitive to alpha value?
-## It would be better to use this R package, however, its installation is a little involved, esp.p on Windows
-## It is probably worth the time though, here it is: https://github.com/zarquon42b/RvtkStatismo
-
-## Once installed, we'll need to load it
-library(RvtkStatismo)
 
 ## Get the volumes for the whole brain
 insect.brain.volumes = pbapply::pbsapply(insect.brains.with.al, 
@@ -180,7 +185,7 @@ insect.optic.volumes = pbapply::pbsapply(insect.brains.with.optic, function(x)
 
 ## And our friend, Drosophila melanogaster
 insect.brains.with.optic[["Drosophila melanogaster UNKNOWN"]] = JFRC2NP.surf # Got dropped out, as it does not have all the entries of a insectbraindb read brain
-insect.optic.volumes[["Drosophila melanogaster UNKNOWN"]] = calculate_volume(subset(JFRC2NP.surf, "LOP_|ME_|LO_"), alpha = 3)
+insect.optic.volumes[["Drosophila melanogaster UNKNOWN"]] = calculate_volume(brain =JFRC2NP.surf, neuropil = "LOP_|ME_|LO_")
 
 ## Assemble data.frame
 species.with.optic = sapply(insect.brains.with.optic, function(x) x$common_name)
@@ -246,8 +251,8 @@ insect.calyx.volumes = pbapply::pbsapply(insect.brains.with.mb, function(x)
   calculate_volume(subset(x, x$RegionList[x$neuropil_full_names%in%calyx])))
 insect.mblobes.volumes = pbapply::pbsapply(insect.brains.with.mb, function(x)
   calculate_volume(subset(x, x$RegionList[x$neuropil_full_names%in%mblobes])))
-insect.calyx.volumes[["Drosophila melanogaster UNKNOWN"]] = calculate_volume(subset(JFRC2NP.surf, "CA_"), alpha = 3)
-insect.mblobes.volumes[["Drosophila melanogaster UNKNOWN"]] = calculate_volume(subset(JFRC2NP.surf, "MB_"), alpha = 3)
+insect.calyx.volumes[["Drosophila melanogaster UNKNOWN"]] = calculate_volume(subset(JFRC2NP.surf, "CA_"))
+insect.mblobes.volumes[["Drosophila melanogaster UNKNOWN"]] = calculate_volume(subset(JFRC2NP.surf, "MB_"))
 insect.brains.with.mb[["Drosophila melanogaster UNKNOWN"]] = JFRC2NP.surf
 
 ## Assemble data.frame
@@ -360,10 +365,8 @@ ggscatter(m, x = "total.volume", y = "volume",
           fill = "neuropil", color = "neuropil", 
           add = "reg.line",                         # Add regression line
           conf.int = TRUE                          # Add confidence interval
-)+stat_cor(aes(color = neuropil), label.x = 3)           # Add correlation coefficient
+)+stat_cor(aes(color = neuropil))           # Add correlation coefficient
 dev.off()
-
-## Those budworms really skew things!
 
 ## Of course, to be sure, we would need to control by reconstruction method and work harder to establish the exact cell type correspondences.
 
