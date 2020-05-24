@@ -14,7 +14,7 @@ nrow(available.neurons)
 ## First, we call the read neurons function, with ids set to NULL
 insect.neurons = insectbraindb_read_neurons(ids = NULL)
 
-## Hmm, let's see how many neurons we have perspecies
+## Hmm, let's see how many neurons we have per species
 table(insect.neurons[,"common_name"])
 
 ## So, it seem the Monarch Butterfly is the clear winner there, 
