@@ -20,11 +20,11 @@ neuron = nat::resample(neuron, stepsize = stepsize)
 boutons = read.csv("data/test/27_06_19_s4_c7_Pom_boutons.csv")
 
 # Let's plot our neuron. 
-# We could set soma to TRUE, or a valu like 100, and this would plot a sphere at the root
+# We could set soma to TRUE, or a value like 100, and this would plot a sphere at the root
 # of this skeleton. However, I do not know if the root of the skeleton is actually the
 # soma? In AMIRA there is an easy way to root the skeleton at a point. It's good if 
-# you can do that for the soma location. Otherwise, you can use correct_soma function in
-# the nat package to update the soma/root of a skeleton interactively, in R.
+# you can do that for the soma location. Otherwise, you can use the correctsoma
+# function in the catnat package to update the soma/root of a skeleton interactively, in R.
 plot3d(as.neuronlist(neuron), col = "black", soma = FALSE, lwd = 4)
 
 # And now we can plot the boutons
@@ -57,7 +57,7 @@ xyzmatrix(neuron) <- applyTransform(xyzmatrix(neuron), trans)
 plot3d(as.neuronlist(neuron), col = "green", soma = FALSE, lwd = 4)
 points3d(boutons[,c("X","Y","Z")], col = "magenta", size = 5)
 
-# So now we can quikly work out the boutons per cable length
+# So now we can quickly work out the boutons per cable length
 info = summary(neuron)
 print(info)
 boutons.per.cable = nrow(boutons)/info$cable.length
@@ -67,7 +67,7 @@ boutons.per.cable = nrow(boutons)/info$cable.length
 bps.per.cable = info$branchpoints/info$cable.length
 
 # That's 0.006, so about 10 x more boutons per cable than branch points.
-# Could branchpoints be another interesting mesure? Or leaf nodes? I.e. endpoints?
+# Could branchpoints be another interesting measure? Or leaf nodes? I.e. endpoints?
 
 # What does the break down look like on a per branch basis?
 boutons$seg = sapply(boutons$treenode, function(x)
@@ -96,7 +96,7 @@ print(t2)
 # i.e. the leaf branches of the neuron
 
 # To get the number of branchpoints per cable for these three orders
-# We need to get the cable length. This could be doen by just counting the
+# We need to get the cable length. This could be done by just counting the
 # Number of points, if we resample the neuron to one point per micron
 # Luckily, we did that at the start, so let's just calculate it
 t3 = table(neuron$d$strahler_order)
@@ -107,33 +107,8 @@ print(t2/t3)
 # So the boutons per micron is different by Strahler order
 
 # We can also run a sholl analysis, another popular measure for mammalian neurons
-# Becuase people haven't thought of a better analysis for mammalian neurons somehow...
-
-# First, let us write a fucntion 
-# perform a sholl type analysis
-sholl_analysis <- function(neuron, start = colMeans(xyzmatrix(neuron)), 
-                           starting.radius = radius.step, ending.radius = 1000, 
-                           radius.step = ending.radius/100){
-  unit.vector <- function(x) {x / sqrt(sum(x^2))}
-  dend = neuron$d
-  dend$dists = nabor::knn(data = matrix(start,ncol=3), query = nat::xyzmatrix(neuron),k=1)$nn.dists
-  if(is.null(ending.radius)){
-    ending.radius = max(dend$dists)
-  }
-  radii = seq(from = starting.radius, to = ending.radius, by = radius.step)
-  sholl = data.frame(radii = radii, intersections = 0)
-  for(n in 1:length(radii)){
-    r = radii[n]
-    segments = neuron$SegList
-    for(segment in segments){
-      p = dend[segment,]
-      dists = (nabor::knn(data = matrix(start,ncol=3), query = nat::xyzmatrix(p),k=1)$nn.dists - r) >= 0
-      sholl[n,]$intersections = sholl[n,]$intersections + lengths(regmatches(paste(dists,collapse=""), gregexpr("TRUEFALSE|FALSETRUE", paste(dists,collapse=""))))
-    }
-  }
-  sholl
-}
-
+# Because people haven't thought of a better analysis for mammalian neurons somehow...
+# See 
 # Run this function on our neuron
 sholla = sholl_analysis(neuron)
 
@@ -154,7 +129,7 @@ ggplot(sholla, aes(x=radii, y=intersections, color="darkgrey")) +
   geom_density(data = bdist, aes(x=dist, y=intersections, color="red"))+
   theme_minimal()
 
-# Him, this visualisation is a little hard to deal with, could also do a density plot
+# Hmm, this visualisation is a little hard to deal with, could also do a density plot
 ggplot(data = bdist, aes(x=dist, color="red", fill = "red")) + 
   geom_density()+
   theme_minimal()
