@@ -1,7 +1,6 @@
 # install
-if(!require('devtools')) install.packages("devtools")
-if(!require('tidyverse')) install.packages("tidyverse")
-if(!require('natverse')) devtools::install_github("natverse/natverse")
+if(!require("natmanager")) install.packages("natmanager")
+if(!require('natverse')) natmanager::install('natverse')
 if(!require('Rvcg')) install.packages("Rvcg")
 if(!require('ggplot2')) install.packages("ggplot2")
 
@@ -13,5 +12,5 @@ library(ggplot2)
 library(ggpubr)
 
 # set working directory to location of this file
-try(setwd(dirname(attr(body(function() {}),'srcfile')$filename)))
+setwd(here::here('07-insectbraindb'))
 
