@@ -7,7 +7,9 @@
 # First of all, we need to load the packages we will be using
 # Make sure the location of the present R file is your working directory
 # See getwd()
-source("01-packages.R")
+setwd(here::here("00-setup"))
+
+source("02-packages.R")
 
 # Now let's read in that .swc file
 neuron = read.neuron("data/test/axon_traces_27_06_19_s4_c7_Pom.traces")
