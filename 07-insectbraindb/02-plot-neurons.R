@@ -1,11 +1,6 @@
-## This script assumed that you have run the file "07-insectbraindb/00-setup.R"
-
-## First, we call the read neurons function, with ids set to NULL
-insect.neurons = insectbraindb_read_neurons(ids = NULL)
-
-## So, it seem the Monarch Butterfly is the clear winner there, 
-## maybe let's just have those
-butterfly.neurons = subset(insect.neurons, common_name == "Monarch Butterfly")
+## This script assumes that you have run the files
+# "07-insectbraindb/00-setup.R"
+# "07-insectbraindb/01-download-neurons.R"
 
 ## And let's plot them
 nat::nopen3d(userMatrix = structure(c(0.998683869838715, -0.00999264605343342, 

@@ -17,7 +17,6 @@ insect.neurons = insectbraindb_read_neurons(ids = NULL)
 ## Hmm, let's see how many neurons we have per species
 table(insect.neurons[,"common_name"])
 
-## So, it seem the Monarch Butterfly is the clear winner there, 
+## So, there are a good number of Monarch Butterfly reconstructions, 
 ## maybe let's just have those
 butterfly.neurons = subset(insect.neurons, common_name == "Monarch Butterfly")
-
